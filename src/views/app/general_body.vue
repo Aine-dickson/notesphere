@@ -1,10 +1,10 @@
 <template>
-    <div class="app_container h-full">
-        <div class="side_bar">
-            <div class="h-full side-bar" :class="{hidden: sideBarOff}">
+    <div class="app_container h-full max-h-full overflow-hidden">
+        <div class="side_bar relative z-40">
+            <div class="h-full max-h-full side-bar" :class="{hidden: sideBarOff}">
                 <sideBar/>
             </div>
-            <div class="menu-drawer h-full" :class="{hidden: !sideBarOff}">
+            <div class="menu-drawer max-h-full h-full" :class="{hidden: !sideBarOff}">
                 <drawer/>
             </div>
         </div>
@@ -56,11 +56,13 @@
     .side_bar{
         grid-area: side_bar;
         height: 100%;
-        width: auto;
+        width: min-content;
+        max-height: 100%;
     }
 
     .main{
         grid-area: main;
         height: 100%;
+        max-height: 100%;
     }
 </style>
