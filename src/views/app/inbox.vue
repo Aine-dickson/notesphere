@@ -1,6 +1,8 @@
 <template>
-    <div class="h-full container grid grid-row-2">
-        <header class="header p-2">
+    <div class="h-full home_container grid">
+
+        <!-- Header -->
+        <header class="home_header p-2">
             <nav class="flex" aria-label="Breadcrumb">
                 <div class="mr-3 flex items-center space-x-1">
                     <svg class="w-4 h-4 text-gray-800 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
@@ -19,12 +21,12 @@
                     <li>
                     <div class="flex items-center">
                         /
-                        <span class="ms-1 text-sm font-medium text-gray-700 hover:text-blue-600 md:ms-2 dark:text-gray-400 dark:hover:text-white">Chats</span>
+                        <span class="ms-1 text-sm font-medium text-gray-700 hover:text-blue-600 md:ms-2 dark:text-gray-400 dark:hover:text-white">Projects</span>
                     </div>
                     </li>
                     <li aria-current="page">
                         /
-                        <span class="ms-1 text-sm font-medium text-gray-700 hover:text-blue-600 md:ms-2 dark:text-gray-400 dark:hover:text-white">Shifura</span>
+                        <span class="ms-1 text-sm font-medium text-gray-700 hover:text-blue-600 md:ms-2 dark:text-gray-400 dark:hover:text-white">my_file</span>
                     </li>
                 </ol>
             </nav>
@@ -38,22 +40,49 @@
                 </button>
             </div>
         </header>
-        <div class="main grid grid-col-2 border-t border-t-gray-300">
-            <div class="body p-2"></div>
-            <div class="side_panel border-l border-l-gray-300 p-2 w-64"></div>
+
+        <!-- Main content -->
+        <div class="main h-full grid grid-col-2 border-t border-t-gray-300">
+            <div class="body relative h-full">
+                <div class="absolute top-0 z-10 w-full bg-white shadow">
+                    <chatHeader/>
+                </div>
+                <div class="absolute top-0 bottom-0 w-full overflow-y-auto">
+                    <messages/>
+                </div>
+                <div class="absolute bottom-0 z-10 w-full bg-slate-200">
+                    <messageInput/>
+                </div>
+            </div>
+
+            <!-- Aside panel -->
+            <div class="side_panel border-l border-l-gray-300 p-2 w-64">
+            <ul role="list" class="divide-y divide-gray-200 dark:divide-gray-700">
+                <li v-for="(item, index) in items" :key="index">
+                    <chat/>
+                </li>
+            </ul>
+            </div>
         </div>
     </div>
 </template>
 
 <script setup lang="ts">
+    import chatHeader from '@/components/inbox/chat_header.vue';
+    import messageInput from '@/components/inbox/msg_input.vue';
+    import messages from '@/components/inbox/messages.vue';
+    import chat from '@/components/inbox/chat.vue';
+
+    let items = [{}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}]
+
 </script>
 
 <style scoped>
-    .container{
-        grid-template-rows: auto 1fr;
+    .home_container{
+        grid-template-rows: 13% 87%;
         grid-template-areas: "header" "main";
     }
-    .header{
+    .home_header{
         grid-area: header;
     }
     .main{
