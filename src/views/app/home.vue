@@ -122,13 +122,42 @@
             </div>
 
             <!-- Aside panel -->
-            <div class="side_panel border-l border-l-gray-300 p-2 w-64"></div>
+            <div class="side_panel border-l border-l-gray-300 p-2 w-64 h-full grid">
+
+                <!-- Starred -->
+                <div class="starred relative max-h-[1/2]">
+                    <div class="channel_list absolute top-0 bottom-0 z-10 w-full overflow-y-auto">
+                        <div class="font-bold text-md p-2 sticky top-0 bg-white">Starred</div>
+                        <ul role="list">
+                            <li v-for="(item, index) in items" :key="index" class="sm:py-4 px-3 cursor-pointer">
+                                <starred/>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Recently viewed -->
+                <div class="recent_viewed h-full relative">
+                    <div class="channel_list absolute top-0 bottom-0 z-10 w-full overflow-y-auto">
+                        <div class="font-bold text-md p-2 sticky top-0 bg-white">Recent viewed</div>
+                        <ul role="list">
+                            <li v-for="(itemi, index) in item" :key="index" class="sm:py-4 px-3 cursor-pointer">
+                                <recentViewed/>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 </template>
 
 <script setup lang="ts">
-    let items = [{}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}]
+    import recentViewed from '@/components/home/recent_viewed.vue';
+    import starred from '@/components/home/starred.vue';
+
+    let items = [{}, {}, {}]
+    let item = [{}, {}, {}, {}, {}, {}, {}]
 
 </script>
 
@@ -150,5 +179,13 @@
     }
     .side_panel {
         grid-area: side_panel;
+        grid-template-rows: auto auto;
+        grid-template-areas: "starred" "recent_viewed";
+    }
+    .recent_viewed{
+        grid-area: recent_viewed;
+    }
+    .starred{
+        grid-area: starred;
     }
 </style>

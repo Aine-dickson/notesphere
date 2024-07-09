@@ -81,7 +81,7 @@
                 <!-- Search results -->
                 <div>
                     <ul class="flex flex-col flex-wrap -mb-px space-x-2">
-                        <li v-for="item in items" class="me-2">
+                        <li v-for="item in results" class="me-2">
                             <a href="#" class="inline-block p-4 border-b-2 border-transparent rounded-t-lg hover:text-gray-600 hover:border-gray-300 dark:hover:text-gray-300">Feed</a>
                         </li>
                     </ul>
@@ -104,6 +104,8 @@
     onMounted(() => {
         initDropdowns()
     })
+
+    let results: any[] = []
 
 </script>
 

@@ -42,93 +42,160 @@
         </header>
 
         <!-- Main content -->
-        <div class="main h-full grid grid-col-2 border-t border-t-gray-300">
-            <div class="body h-full overflow-y-auto">
+        <div class="main h-full grid border-t border-t-gray-300">
 
-                <!-- AI text area -->
-                <form class="p-2">
-                    <div class="w-full mb-4 border border-gray-200 rounded-lg bg-gray-50 dark:bg-gray-700 dark:border-gray-600">
-                            <div class="flex">
-                                <div class="px-4 flex-grow flex py-1 bg-white rounded-t-lg dark:bg-gray-800">
-                                    <label for="comment" class="sr-only">Your question</label>
-                                    <textarea id="comment" rows="1" class="w-full px-0 text-sm text-gray-900 bg-white border-0 dark:bg-gray-800 focus:ring-0 dark:text-white dark:placeholder-gray-400" placeholder="Ask Assistant AI..." required ></textarea>
-                                    <button type="button" class="inline-flex justify-center items-center p-2 text-gray-500 rounded cursor-pointer hover:text-gray-900 hover:bg-gray-100 dark:text-gray-400 dark:hover:text-white dark:hover:bg-gray-600">
-                                        <svg class="w-4 h-4 text-gray-800" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 12 20">
-                                            <path stroke="currentColor" stroke-linejoin="round" stroke-width="2" d="M1 6v8a5 5 0 1 0 10 0V4.5a3.5 3.5 0 1 0-7 0V13a2 2 0 0 0 4 0V6"/>
-                                        </svg>
-                                        <span class="sr-only">Attach file</span>
-                                    </button>
-                                </div>
-                                <button type="button" class="inline-flex justify-center items-center p-2 text-gray-500 rounded cursor-pointer hover:text-gray-900 hover:bg-gray-100 dark:text-gray-400 dark:hover:text-white dark:hover:bg-gray-600">
-                                    <svg class="w-5 h-5 text-gray-800 rotate-90 rtl:-rotate-90" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 18 20">
-                                        <path d="m17.914 18.594-8-18a1 1 0 0 0-1.828 0l-8 18a1 1 0 0 0 1.157 1.376L8 18.281V9a1 1 0 0 1 2 0v9.281l6.758 1.689a1 1 0 0 0 1.156-1.376Z"/>
-                                    </svg>
-                                    <span class="sr-only">Upload image</span>
-                                </button>
+            <!-- Topics panel -->
+            <div class="topics_panel w-56 border-r border-r-gray-300">
+                <span class="font-bold text-md p-2">Topics</span>
+                <ul>
+                    <li v-for="(item, index) in items" :key="index">
+                        <topicPlate/>
+                    </li>
+                </ul>
+            </div>
+
+            <!-- Converstion body -->
+            <div class="body h-full relative">
+                <!-- Control panel -->
+                <div class="absolute top-0 z-20 w-full bg-gray-300 flex justify-between p-2 items-center">
+                    <span class="font-bold text-gray-700">Channel name</span>
+
+                    <!-- Search channel -->
+                    <form class="max-w-md mx-auto">   
+                        <label for="default-search" class="mb-2 text-sm font-medium text-gray-900 sr-only dark:text-white">Search</label>
+                        <div class="relative">
+                            <div class="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">
+                                <svg class="w-4 h-4 text-gray-500 dark:text-gray-400" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 20">
+                                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z"/>
+                                </svg>
                             </div>
-                        <div class="items-center space-x-1 py-2 border-t dark:border-gray-600">
-                            <div class="flex ps-0 space-x-1 rtl:space-x-reverse sm:ps-2">
-                                <button type="button" class="inline-flex justify-center items-center p-2 text-gray-500 rounded cursor-pointer hover:text-gray-900 hover:bg-gray-100 dark:text-gray-400 dark:hover:text-white dark:hover:bg-gray-600">
-                                    <svg class="w-4 h-4" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 16 20">
-                                            <path d="M8 0a7.992 7.992 0 0 0-6.583 12.535 1 1 0 0 0 .12.183l.12.146c.112.145.227.285.326.4l5.245 6.374a1 1 0 0 0 1.545-.003l5.092-6.205c.206-.222.4-.455.578-.7l.127-.155a.934.934 0 0 0 .122-.192A8.001 8.001 0 0 0 8 0Zm0 11a3 3 0 1 1 0-6 3 3 0 0 1 0 6Z"/>
-                                        </svg>
-                                    <span class="sr-only">Set location</span>
-                                </button>
-                                
-                                <button type="button" class="inline-flex justify-center items-center p-2 text-gray-500 rounded cursor-pointer hover:text-gray-900 hover:bg-gray-100 dark:text-gray-400 dark:hover:text-white dark:hover:bg-gray-600">
-                                    <svg class="w-4 h-4" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 18">
-                                            <path d="M18 0H2a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2Zm-5.5 4a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3Zm4.376 10.481A1 1 0 0 1 16 15H4a1 1 0 0 1-.895-1.447l3.5-7A1 1 0 0 1 7.468 6a.965.965 0 0 1 .9.5l2.775 4.757 1.546-1.887a1 1 0 0 1 1.618.1l2.541 4a1 1 0 0 1 .028 1.011Z"/>
-                                        </svg>
-                                    <span class="sr-only">Upload image</span>
-                                </button>
+                            <input type="search" id="default-search" class="block w-full p-1 ps-10 text-sm text-gray-900 border border-gray-300 rounded-full bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="Search threads or messages..." required />
+                        </div>
+                    </form>
+
+                    <!-- Helper icons -->
+                    <div class="helper_icons flex space-x-2">
+
+                        <!-- Pane activators -->
+                        <div class="pane_activators flex space-x-1">
+                            <div @click="togglePanes('left')" data-tooltip-target="toggle_topics" class="rounded-md bg-slate-800 cursor-pointer">
+                                <svg class="w-6 h-6 text-gray-300 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+                                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m17 16-4-4 4-4m-6 8-4-4 4-4"/>
+                                </svg>
+                            </div>
+                            <div id="toggle_topics" role="tooltip" class="absolute z-10 invisible inline-block px-3 py-2 text-sm font-medium text-white transition-opacity duration-300 bg-gray-400 rounded-lg shadow-sm opacity-0 tooltip dark:bg-gray-700">
+                                Toggle channels
+                                <div class="tooltip-arrow" data-popper-arrow></div>
+                            </div>
+
+                            <div @click="togglePanes('right')" data-tooltip-target="toggle_channels" class="rounded-md bg-slate-800 cursor-pointer">
+                                <svg class="w-6 h-6 text-gray-300 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+                                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m7 16 4-4-4-4m6 8 4-4-4-4"/>
+                                </svg>
+                            </div>
+                            <div id="toggle_channels" role="tooltip" class="absolute z-10 invisible inline-block px-3 py-2 text-sm font-medium text-white transition-opacity duration-300 bg-gray-400 rounded-lg shadow-sm opacity-0 tooltip dark:bg-gray-700">
+                                Toggle topics
+                                <div class="tooltip-arrow" data-popper-arrow></div>
+                            </div>
+                        </div>
+
+                        <div class="flex">
+                            <div class="treads">
+                                <svg data-tooltip-target="threads" class="w-6 h-6 text-gray-800 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+                                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 8v8m0-8a2 2 0 1 0 0-4 2 2 0 0 0 0 4Zm0 8a2 2 0 1 0 0 4 2 2 0 0 0 0-4Zm6-2a2 2 0 1 1 4 0 2 2 0 0 1-4 0Zm0 0h-1a5 5 0 0 1-5-5v-.5"/>
+                                </svg>
+                            </div>
+                            <div id="threads" role="tooltip" class="absolute z-10 invisible inline-block px-3 py-2 text-sm font-medium text-white transition-opacity duration-300 bg-gray-400 rounded-lg shadow-sm opacity-0 tooltip dark:bg-gray-700">
+                                Threads
+                                <div class="tooltip-arrow" data-popper-arrow></div>
+                            </div>
+
+                            <div data-tooltip-target="more_options" class="more-options">
+                                <svg class="w-6 h-6 text-gray-800 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" height="24" fill="none" viewBox="0 0 24 24">
+                                    <path stroke="currentColor" stroke-linecap="round" stroke-width="4" d="M12 6h.01M12 12h.01M12 18h.01"/>
+                                </svg>
+                            </div>
+                            <div id="more_options" role="tooltip" class="absolute z-10 invisible inline-block px-3 py-2 text-sm font-medium text-white transition-opacity duration-300 bg-gray-400 rounded-lg shadow-sm opacity-0 tooltip dark:bg-gray-700">
+                                More options
+                                <div class="tooltip-arrow" data-popper-arrow></div>
                             </div>
                         </div>
                     </div>
-                </form>
+                </div>
 
-                <!-- Home collection -->
-                <div>
-                    <!-- Home menu(tabs) -->
-                    <div class="sticky top-0 bg-white text-sm font-medium text-center text-gray-500 border-b border-gray-200 shadow-sm shadow-gray-300 dark:text-gray-400 dark:border-gray-700">
-                        <ul class="flex flex-wrap -mb-px">
-                            <li class="me-2">
-                                <a href="#" class="inline-block p-4 border-b-2 border-transparent rounded-t-lg hover:text-gray-600 hover:border-gray-300 dark:hover:text-gray-300">Feed</a>
-                            </li>
-                            <li class="me-2">
-                                <a href="#" class="inline-block p-4 text-blue-600 border-b-2 border-blue-600 rounded-t-lg active dark:text-blue-500 dark:border-blue-500" aria-current="page">Spaces</a>
-                            </li>
-                            <li class="me-2">
-                                <a href="#" class="inline-block p-4 border-b-2 border-transparent rounded-t-lg hover:text-gray-600 hover:border-gray-300 dark:hover:text-gray-300">Libraries</a>
-                            </li>
-                            <li class="me-2">
-                                <a href="#" class="inline-block p-4 border-b-2 border-transparent rounded-t-lg hover:text-gray-600 hover:border-gray-300 dark:hover:text-gray-300">Challenges</a>
-                            </li>
-                            <li>
-                                <a href="#" class="inline-block p-4 border-b-2 border-transparent rounded-t-lg hover:text-gray-600 hover:border-gray-300 dark:hover:text-gray-300">Notifications</a>
-                            </li>
-                        </ul>
-                    </div>
-
-                    <div>
-                        <ul class="flex flex-col flex-wrap -mb-px space-x-2">
-                            <li v-for="item in items" class="me-2">
-                                <a href="#" class="inline-block p-4 border-b-2 border-transparent rounded-t-lg hover:text-gray-600 hover:border-gray-300 dark:hover:text-gray-300">Feed</a>
-                            </li>
-                        </ul>
-                    </div>
+                <!-- Messages body -->
+                <div class="messages absolute top-0 bottom-0 w-full overflow-y-auto">
 
                 </div>
 
+                <!-- Message input -->
+                <div class="absolute bottom-0 w-full">
+                    <messageInput/>
+                </div>
             </div>
 
             <!-- Aside panel -->
-            <div class="side_panel border-l border-l-gray-300 p-2 w-64"></div>
+            <div class="side_panel border-l h-full relative border-l-gray-300 pt-2 w-64">
+                <!-- Search channels -->
+                <form class="max-w-md mx-auto relative z-20 px-2">   
+                    <label for="default-search" class="mb-2 text-sm font-medium text-gray-900 sr-only dark:text-white">Search</label>
+                    <div class="relative">
+                        <div class="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">
+                            <svg class="w-4 h-4 text-gray-500 dark:text-gray-400" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 20">
+                                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z"/>
+                            </svg>
+                        </div>
+                        <input type="search" id="default-search" class="block w-full p-1 ps-10 text-sm text-gray-900 border border-gray-300 rounded-full bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="Search channels..." required />
+                    </div>
+                </form>
+
+                <div class="channel_list absolute top-0 bottom-0 z-10 w-full overflow-y-auto">
+                    <ul role="list" class="divide-y divide-gray-200 dark:divide-gray-700 mt-10">
+                        <li v-for="(item, index) in items" :key="index" class="sm:py-4 px-3 cursor-pointer">
+                            <channelPlate/>
+                        </li>
+                    </ul>
+                </div>
+            </div>
         </div>
     </div>
 </template>
 
 <script setup lang="ts">
-    let items = [{}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}]
+    import topicPlate from '@/components/channels/topic_plate.vue'
+    import messageInput from '@/components/inbox/msg_input.vue';
+    import channelPlate from '@/components/channels/channel_plate.vue'
+
+    import { onMounted } from 'vue';
+    import { initTooltips } from 'flowbite';
+
+    let items = [{}, {}]
+    let topics_panel: HTMLElement | null;
+    let side_panel : HTMLElement | null;
+
+    onMounted(()=> {
+        initTooltips()
+        topics_panel = document.querySelector(".topics_panel")
+        side_panel = document.querySelector(".side_panel")
+    })
+
+    const togglePanes = (direction: string) => {
+        if(direction == "left"){
+            console.log(topics_panel)
+            if(!topics_panel?.classList.contains("hidden")){
+                topics_panel?.classList.add("hidden")
+            } else {
+                topics_panel.classList.remove("hidden")
+            }
+        } else if(direction == "right") {
+            console.log(side_panel)
+            if(!side_panel?.classList.contains("hidden")){
+                side_panel?.classList.add("hidden")
+            } else {
+                side_panel.classList.remove("hidden")
+            }
+        }
+    }
 
 </script>
 
@@ -142,11 +209,14 @@
     }
     .main{
         grid-area: main;
-        grid-template-columns:1fr auto;
-        grid-template-areas: "body side_panel";
+        grid-template-columns:auto 1fr auto;
+        grid-template-areas: "topics_panel body side_panel";
     }
     .body{
         grid-area: body;
+    }
+    .topics_panel{
+        grid-area: topics_panel;
     }
     .side_panel {
         grid-area: side_panel;

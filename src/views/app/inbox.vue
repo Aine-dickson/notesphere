@@ -44,24 +44,40 @@
         <!-- Main content -->
         <div class="main h-full grid grid-col-2 border-t border-t-gray-300">
             <div class="body relative h-full">
-                <div class="absolute top-0 z-10 w-full bg-white shadow">
+                <div class="absolute top-0 z-20 w-full bg-white shadow">
                     <chatHeader/>
                 </div>
-                <div class="absolute top-0 bottom-0 w-full overflow-y-auto">
+                <div class="absolute top-0 bottom-0 z-10 w-full mt-16">
                     <messages/>
                 </div>
-                <div class="absolute bottom-0 z-10 w-full bg-slate-200">
+                <div class="absolute bottom-0 z-20 w-full bg-slate-200">
                     <messageInput/>
                 </div>
             </div>
 
             <!-- Aside panel -->
-            <div class="side_panel border-l border-l-gray-300 p-2 w-64">
-            <ul role="list" class="divide-y divide-gray-200 dark:divide-gray-700">
-                <li v-for="(item, index) in items" :key="index">
-                    <chat/>
-                </li>
-            </ul>
+            <div class="side_panel border-l border-l-gray-300 w-64 relative">
+                <div class="relative z-20 bg-white pt-2 px-2">
+                    <form class="max-w-md mx-auto">   
+                        <label for="default-search" class="mb-2 text-sm font-medium text-gray-900 sr-only dark:text-white">Search</label>
+                        <div class="relative">
+                            <div class="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">
+                                <svg class="w-4 h-4 text-gray-500 dark:text-gray-400" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 20">
+                                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z"/>
+                                </svg>
+                            </div>
+                            <input type="search" id="default-search" class="block w-full p-2 ps-10 text-sm text-gray-900 border border-gray-300 rounded-full bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="Search people or messages..." required />
+                        </div>
+                    </form>
+                </div>
+
+                <div class="absolute top-0 bottom-0 overflow-y-auto">
+                    <ul role="list" class="divide-y divide-gray-200 dark:divide-gray-700 mt-10">
+                        <li v-for="(item, index) in items" :key="index">
+                            <chat/>
+                        </li>
+                    </ul>
+                </div>
             </div>
         </div>
     </div>

@@ -17,7 +17,7 @@
                 </p>
             </div>
             <div class="inline-flex items-center text-base font-semibold text-gray-900 dark:text-white">
-                Unread count
+                <span class="text-white inline-flex items-center justify-center w-full h-full px-1.5 text-sm font-medium bg-green-500 border-2 border-white rounded-full dark:bg-blue-900 dark:text-blue-300">3</span>
             </div>
         </div>
     </li>

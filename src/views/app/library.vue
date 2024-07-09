@@ -72,13 +72,25 @@
             </div>
 
             <!-- Aside panel -->
-            <div class="side_panel border-l border-l-gray-300 p-2 w-64"></div>
+            <div class="side_panel relative border-l border-l-gray-300 h-full p-2 w-64">
+                <span class="font-bold text-md p-2">Starred files</span>
+                <div class="absolute top-0 bottom-0 w-full overflow-y-auto">
+                    <ul class="mt-10 p-2">
+                        <li v-for="(item, index) in items" :key="index" class="mb-4">
+                            <file/>
+                        </li>
+                    </ul>
+                </div>
+            </div>
         </div>
     </div>
 </template>
 
 <script setup lang="ts">
     import folders from '@/components/library/folders.vue'
+    import file from '@/components/library/file.vue'
+
+    let items = [{}, {}]
 
 </script>
 

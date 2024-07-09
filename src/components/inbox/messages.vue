@@ -18,8 +18,8 @@ const messages = [
     {sender: "Lord Ssebata", receiver: "Admin", timeSent: "22:10", type: "voice"},
 ];
 
-const messageToRender = (type: any) => {
-    switch(type){
+const messageToRender = (messageType: string) => {
+    switch(messageType){
         case "voice":
             return Voice;
         case "plain":
