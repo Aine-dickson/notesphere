@@ -12,23 +12,7 @@
                         <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m9 5 7 7-7 7"/>
                     </svg>
                 </div>
-                <ol class="inline-flex items-center space-x-1 md:space-x-2 rtl:space-x-reverse">
-                    <li class="inline-flex items-center">
-                        <span class="inline-flex items-center text-sm font-medium text-gray-700 hover:text-blue-600 dark:text-gray-400 dark:hover:text-white">
-                            Search
-                        </span>
-                    </li>
-                    <li>
-                    <div class="flex items-center">
-                        /
-                        <span class="ms-1 text-sm font-medium text-gray-700 hover:text-blue-600 md:ms-2 dark:text-gray-400 dark:hover:text-white">Projects</span>
-                    </div>
-                    </li>
-                    <li aria-current="page">
-                        /
-                        <span class="ms-1 text-sm font-medium text-gray-700 hover:text-blue-600 md:ms-2 dark:text-gray-400 dark:hover:text-white">my_file</span>
-                    </li>
-                </ol>
+                <Breadcrumb/>
             </nav>
             <div class="flex justify-between items-end">
                 <span class="font-bold text-xl">Search</span>
@@ -98,10 +82,17 @@
 </template>
 
 <script setup lang="ts">
+    import Breadcrumb from '@/components/breadcrumb.vue';
     import { initDropdowns } from 'flowbite';
-    import { onMounted } from 'vue';
+    import { useInnerRouter } from '@/stores/router';
+    import { computed, onMounted } from 'vue';
+
+
+    let innerRouter = useInnerRouter();
+    let url = computed(() => innerRouter.ulrContainer)
 
     onMounted(() => {
+        innerRouter.rebuild("Search");
         initDropdowns()
     })
 

@@ -12,23 +12,8 @@
                         <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m9 5 7 7-7 7"/>
                     </svg>
                 </div>
-                <ol class="inline-flex items-center space-x-1 md:space-x-2 rtl:space-x-reverse">
-                    <li class="inline-flex items-center">
-                        <span class="inline-flex items-center text-sm font-medium text-gray-700 hover:text-blue-600 dark:text-gray-400 dark:hover:text-white">
-                            Editor
-                        </span>
-                    </li>
-                    <li>
-                    <div class="flex items-center">
-                        /
-                        <span class="ms-1 text-sm font-medium text-gray-700 hover:text-blue-600 md:ms-2 dark:text-gray-400 dark:hover:text-white">Projects</span>
-                    </div>
-                    </li>
-                    <li aria-current="page">
-                        /
-                        <span class="ms-1 text-sm font-medium text-gray-700 hover:text-blue-600 md:ms-2 dark:text-gray-400 dark:hover:text-white">my_file</span>
-                    </li>
-                </ol>
+
+                <Breadcrumb/>
             </nav>
             <div class="flex justify-between items-end">
                 <span class="font-bold text-xl">Editor</span>
@@ -50,25 +35,36 @@
             <!-- Aside panel -->
             <div class="side_panel border-l border-l-gray-300 w-64">
                 <div class="bg-white text-sm font-medium text-center text-gray-500 border-b border-gray-200 shadow-sm shadow-gray-300 dark:text-gray-400 dark:border-gray-700">
-                        <ul class="flex flex-wrap -mb-px justify-evenly">
-                            <li>
-                                <a href="#" class="inline-block p-2 border-b border-transparent rounded-t-lg hover:text-gray-600 hover:border-gray-300 dark:hover:text-gray-300">Reactions</a>
-                            </li>
-                            <li>
-                                <a href="#" class="inline-block p-2 text-blue-600 border-b border-blue-600 rounded-t-lg active dark:text-blue-500 dark:border-blue-500" aria-current="page">Collaborators</a>
-                            </li>
-                            <li>
-                                <a href="#" class="inline-block p-2 border-b border-transparent rounded-t-lg hover:text-gray-600 hover:border-gray-300 dark:hover:text-gray-300">Issues</a>
-                            </li>
-                        </ul>
-                    </div>
+                    <ul class="flex flex-wrap -mb-px justify-evenly">
+                        <li>
+                            <a href="#" class="inline-block p-2 border-b border-transparent rounded-t-lg hover:text-gray-600 hover:border-gray-300 dark:hover:text-gray-300">Reactions</a>
+                        </li>
+                        <li>
+                            <a href="#" class="inline-block p-2 text-blue-600 border-b border-blue-600 rounded-t-lg active dark:text-blue-500 dark:border-blue-500" aria-current="page">Collaborators</a>
+                        </li>
+                        <li>
+                            <a href="#" class="inline-block p-2 border-b border-transparent rounded-t-lg hover:text-gray-600 hover:border-gray-300 dark:hover:text-gray-300">Issues</a>
+                        </li>
+                    </ul>
+                </div>
             </div>
         </div>
     </div>
 </template>
 
 <script setup lang="ts">
+    import Breadcrumb from '@/components/breadcrumb.vue';
     import editor from '@/components/editor/editor.vue';
+
+    import { useInnerRouter } from '@/stores/router';
+    import { computed, onMounted } from 'vue';
+
+    let innerRouter = useInnerRouter();
+    let url = computed(() => innerRouter.ulrContainer)
+
+    onMounted(() => {
+        innerRouter.rebuild("Editor");
+    })
 
 </script>
 

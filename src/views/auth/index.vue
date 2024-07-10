@@ -29,7 +29,7 @@
                 </span>
             </div>
             <div class="hidden lg:mt-0 lg:col-span-5 lg:flex">
-                <img src="https://flowbite.s3.amazonaws.com/blocks/marketing-ui/hero/phone-mockup.png" alt="mockup">
+                <img src="../../assets/original-fb41d37ce95d62afa154746de0be885f.png" alt="mockup">
             </div>                
         </div>
         <div>

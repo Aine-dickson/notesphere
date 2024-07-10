@@ -12,23 +12,8 @@
                         <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m9 5 7 7-7 7"/>
                     </svg>
                 </div>
-                <ol class="inline-flex items-center space-x-1 md:space-x-2 rtl:space-x-reverse">
-                    <li class="inline-flex items-center">
-                        <span class="inline-flex items-center text-sm font-medium text-gray-700 hover:text-blue-600 dark:text-gray-400 dark:hover:text-white">
-                            Channels
-                        </span>
-                    </li>
-                    <li>
-                    <div class="flex items-center">
-                        /
-                        <span class="ms-1 text-sm font-medium text-gray-700 hover:text-blue-600 md:ms-2 dark:text-gray-400 dark:hover:text-white">Projects</span>
-                    </div>
-                    </li>
-                    <li aria-current="page">
-                        /
-                        <span class="ms-1 text-sm font-medium text-gray-700 hover:text-blue-600 md:ms-2 dark:text-gray-400 dark:hover:text-white">my_file</span>
-                    </li>
-                </ol>
+
+                <Breadcrumb/>
             </nav>
             <div class="flex justify-between items-end">
                 <span class="font-bold text-xl">Channels</span>
@@ -84,7 +69,7 @@
                                 </svg>
                             </div>
                             <div id="toggle_topics" role="tooltip" class="absolute z-10 invisible inline-block px-3 py-2 text-sm font-medium text-white transition-opacity duration-300 bg-gray-400 rounded-lg shadow-sm opacity-0 tooltip dark:bg-gray-700">
-                                Toggle channels
+                                Toggle topics
                                 <div class="tooltip-arrow" data-popper-arrow></div>
                             </div>
 
@@ -94,7 +79,7 @@
                                 </svg>
                             </div>
                             <div id="toggle_channels" role="tooltip" class="absolute z-10 invisible inline-block px-3 py-2 text-sm font-medium text-white transition-opacity duration-300 bg-gray-400 rounded-lg shadow-sm opacity-0 tooltip dark:bg-gray-700">
-                                Toggle topics
+                                Toggle channels
                                 <div class="tooltip-arrow" data-popper-arrow></div>
                             </div>
                         </div>
@@ -166,14 +151,18 @@
     import messageInput from '@/components/inbox/msg_input.vue';
     import channelPlate from '@/components/channels/channel_plate.vue'
 
-    import { onMounted } from 'vue';
     import { initTooltips } from 'flowbite';
+    import Breadcrumb from '@/components/breadcrumb.vue';
+    import { useInnerRouter } from '@/stores/router';
+    import { onMounted } from 'vue';
 
     let items = [{}, {}]
     let topics_panel: HTMLElement | null;
     let side_panel : HTMLElement | null;
-
+    let innerRouter = useInnerRouter();
+    
     onMounted(()=> {
+        innerRouter.rebuild("Channels");
         initTooltips()
         topics_panel = document.querySelector(".topics_panel")
         side_panel = document.querySelector(".side_panel")

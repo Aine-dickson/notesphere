@@ -12,23 +12,8 @@
                         <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m9 5 7 7-7 7"/>
                     </svg>
                 </div>
-                <ol class="inline-flex items-center space-x-1 md:space-x-2 rtl:space-x-reverse">
-                    <li class="inline-flex items-center">
-                        <span class="inline-flex items-center text-sm font-medium text-gray-700 hover:text-blue-600 dark:text-gray-400 dark:hover:text-white">
-                            Home
-                        </span>
-                    </li>
-                    <li>
-                    <div class="flex items-center">
-                        /
-                        <span class="ms-1 text-sm font-medium text-gray-700 hover:text-blue-600 md:ms-2 dark:text-gray-400 dark:hover:text-white">Projects</span>
-                    </div>
-                    </li>
-                    <li aria-current="page">
-                        /
-                        <span class="ms-1 text-sm font-medium text-gray-700 hover:text-blue-600 md:ms-2 dark:text-gray-400 dark:hover:text-white">my_file</span>
-                    </li>
-                </ol>
+                
+                <breadcrumb/>
             </nav>
             <div class="flex justify-between items-end">
                 <span class="font-bold text-xl">Home</span>
@@ -91,28 +76,28 @@
                     <!-- Home menu(tabs) -->
                     <div class="sticky top-0 bg-white text-sm font-medium text-center text-gray-500 border-b border-gray-200 shadow-sm shadow-gray-300 dark:text-gray-400 dark:border-gray-700">
                         <ul class="flex flex-wrap -mb-px">
-                            <li class="me-2">
-                                <a href="#" class="inline-block p-4 border-b-2 border-transparent rounded-t-lg hover:text-gray-600 hover:border-gray-300 dark:hover:text-gray-300">Feed</a>
+                            <li @click="homeNavigator('feed')" class="me-2 cursor-pointer">
+                                <span id="feed" class="homeTab inactiveHomeTab inline-block p-4 border-b-2 rounded-t-lg">Feed</span>
                             </li>
-                            <li class="me-2">
-                                <a href="#" class="inline-block p-4 text-blue-600 border-b-2 border-blue-600 rounded-t-lg active dark:text-blue-500 dark:border-blue-500" aria-current="page">Spaces</a>
+                            <li @click="homeNavigator('spaces')" class="me-2 cursor-pointer">
+                                <span id="spaces" class="homeTab inactiveHomeTab inline-block p-4 border-b-2 rounded-t-lg" aria-current="page">Spaces</span>
                             </li>
-                            <li class="me-2">
-                                <a href="#" class="inline-block p-4 border-b-2 border-transparent rounded-t-lg hover:text-gray-600 hover:border-gray-300 dark:hover:text-gray-300">Libraries</a>
+                            <li @click="homeNavigator('libraries')" class="me-2 cursor-pointer">
+                                <span id="libraries" class="homeTab inactiveHomeTab inline-block p-4 border-b-2 rounded-t-lg">Libraries</span>
                             </li>
-                            <li class="me-2">
-                                <a href="#" class="inline-block p-4 border-b-2 border-transparent rounded-t-lg hover:text-gray-600 hover:border-gray-300 dark:hover:text-gray-300">Challenges</a>
+                            <li @click="homeNavigator('challenges')" class="me-2 cursor-pointer">
+                                <span id="challenges" class="homeTab inactiveHomeTab inline-block p-4 border-b-2 rounded-t-lg">Challenges</span>
                             </li>
-                            <li>
-                                <a href="#" class="inline-block p-4 border-b-2 border-transparent rounded-t-lg hover:text-gray-600 hover:border-gray-300 dark:hover:text-gray-300">Notifications</a>
+                            <li @click="homeNavigator('notifications')" class="cursor-pointer">
+                                <span id="notifications" class="homeTab inactiveHomeTab inline-block p-4 border-b-2 rounded-t-lg">Notifications</span>
                             </li>
                         </ul>
                     </div>
 
                     <div>
                         <ul class="flex flex-col flex-wrap -mb-px space-x-2">
-                            <li v-for="item in items" class="me-2">
-                                <a href="#" class="inline-block p-4 border-b-2 border-transparent rounded-t-lg hover:text-gray-600 hover:border-gray-300 dark:hover:text-gray-300">Feed</a>
+                            <li v-for="item in items">
+                                <span class="inline-block p-4 border-b-2 rounded-t-lg">Feed</span>
                             </li>
                         </ul>
                     </div>
@@ -155,9 +140,41 @@
 <script setup lang="ts">
     import recentViewed from '@/components/home/recent_viewed.vue';
     import starred from '@/components/home/starred.vue';
+    import breadcrumb from '@/components/breadcrumb.vue';
+
+    import { useInnerRouter } from '@/stores/router';
+    import { computed, onMounted } from 'vue';
+
+    let innerRouter = useInnerRouter();
+    let url = computed(() => innerRouter.ulrContainer)
 
     let items = [{}, {}, {}]
     let item = [{}, {}, {}, {}, {}, {}, {}]
+
+    let homeTabs: HTMLElement[] | null; 
+
+    onMounted(() => {
+        innerRouter.rebuild("Home")
+        homeTabs = document.querySelectorAll(".homeTab");
+        let initTab = document.querySelector("#feed");
+        innerRouter.push("feed")
+        initTab?.parentElement?.dispatchEvent(new Event('click'));
+    })
+
+    let homeNavigator = (tabName: string) => {
+        homeTabs?.forEach(tab => {
+            if(tab.classList.contains("activeHomeTab")){
+                tab.classList.replace("activeHomeTab", "inactiveHomeTab")
+            }
+        })
+
+        homeTabs?.forEach(tab => {
+            if(tab.id == tabName){
+                tab.classList.replace("inactiveHomeTab","activeHomeTab")
+                innerRouter.replaceLast(tabName)
+            }
+        });
+    }
 
 </script>
 
@@ -187,5 +204,12 @@
     }
     .starred{
         grid-area: starred;
+    }
+
+    .activeHomeTab {
+        @apply text-blue-600 border-blue-600 dark:text-blue-500 dark:border-blue-500
+    }
+    .inactiveHomeTab {
+        @apply border-transparent hover:text-gray-600 hover:border-gray-300 dark:hover:text-gray-300
     }
 </style>
