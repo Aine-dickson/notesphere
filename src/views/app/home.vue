@@ -15,14 +15,33 @@
                 
                 <breadcrumb/>
             </nav>
-            <div class="flex justify-between items-end">
+            <div class="flex justify-between items-end relative">
                 <span class="font-bold text-xl">Home</span>
-                <button type="button" class="text-white bg-[#1da1f2] hover:bg-[#1da1f2]/90 focus:ring-4 focus:outline-none focus:ring-[#1da1f2]/50 font-medium rounded-lg text-sm px-5 py-2 text-center inline-flex items-center dark:focus:ring-[#1da1f2]/55 me-2 mb-2">
+                <button @click="drop_create" type="button" class="text-white bg-[#1da1f2] hover:bg-[#1da1f2]/90 focus:ring-4 focus:outline-none focus:ring-[#1da1f2]/50 font-medium rounded-lg text-sm px-5 py-2 text-center inline-flex items-center dark:focus:ring-[#1da1f2]/55 me-2 mb-2">
                     <svg class="w-4 h-4 me-2" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
                         <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 12h14m-7 7V5"/>
                     </svg>
                     Create New
+                    <svg class="w-2.5 h-2.5 ms-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 10 6">
+                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 1 4 4 4-4"/>
+                    </svg>
                 </button>
+
+                <!-- Dropdown menu -->
+                <div id="create_dropdown" class="hidden absolute z-30 -bottom-28 right-0 bg-gray-100 divide-y divide-gray-100 rounded-lg shadow w-44 dark:bg-gray-700">
+                    <ul class="text-sm text-gray-700 dark:text-gray-200" aria-labelledby="dropdownDefaultButton">
+                        <li>
+                            <span class="cursor-pointer block px-4 py-2 hover:bg-gray-200 dark:hover:bg-gray-600 dark:hover:text-white">Post</span>
+                        </li>
+                        <li>
+                            <span class="cursor-pointer block px-4 py-2 hover:bg-gray-200 dark:hover:bg-gray-600 dark:hover:text-white">Space</span>
+                        </li>
+                        <li>
+                            <span class="cursor-pointer block px-4 py-2 hover:bg-gray-200 dark:hover:bg-gray-600 dark:hover:text-white">Challenge</span>
+                        </li>
+                    </ul>
+                </div>
+
             </div>
         </header>
 
@@ -160,6 +179,15 @@
         innerRouter.push("feed")
         initTab?.parentElement?.dispatchEvent(new Event('click'));
     })
+
+    let drop_create = () => {
+        let create_dropdown = document.querySelector("#create_dropdown");
+        if (create_dropdown?.classList.contains('hidden')) {
+            create_dropdown.classList.remove('hidden')
+        } else {
+            create_dropdown?.classList.add('hidden')
+        }
+    }
 
     let homeNavigator = (tabName: string) => {
         homeTabs?.forEach(tab => {

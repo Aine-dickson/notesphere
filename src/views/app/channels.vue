@@ -15,6 +15,7 @@
 
                 <Breadcrumb/>
             </nav>
+            
             <div class="flex justify-between items-end">
                 <span class="font-bold text-xl">Channels</span>
                 <button type="button" class="text-white bg-[#1da1f2] hover:bg-[#1da1f2]/90 focus:ring-4 focus:outline-none focus:ring-[#1da1f2]/50 font-medium rounded-lg text-sm px-5 py-2 text-center inline-flex items-center dark:focus:ring-[#1da1f2]/55 me-2 mb-2">
@@ -33,7 +34,7 @@
             <div class="topics_panel w-56 border-r border-r-gray-300">
                 <span class="font-bold text-md p-2">Topics</span>
                 <ul>
-                    <li v-for="(item, index) in items" :key="index">
+                    <li @click="topicNavigator(item.name)" v-for="(item, index) in items" :key="index">
                         <topicPlate/>
                     </li>
                 </ul>
@@ -110,7 +111,12 @@
 
                 <!-- Messages body -->
                 <div class="messages absolute top-0 bottom-0 w-full overflow-y-auto">
-
+                    <div>He</div>
+                    <div>hdh</div>
+                    <div>hdh</div>
+                    <div>hdh</div>
+                    <div>hdh</div>
+                    {{ routerLevel }}
                 </div>
 
                 <!-- Message input -->
@@ -136,7 +142,7 @@
 
                 <div class="channel_list absolute top-0 bottom-0 z-10 w-full overflow-y-auto">
                     <ul role="list" class="divide-y divide-gray-200 dark:divide-gray-700 mt-10">
-                        <li v-for="(item, index) in items" :key="index" class="sm:py-4 px-3 cursor-pointer">
+                        <li @click="channelNavigator(item.name)" v-for="(item, index) in items" :key="index" class="sm:py-4 px-3 cursor-pointer">
                             <channelPlate/>
                         </li>
                     </ul>
@@ -154,12 +160,13 @@
     import { initTooltips } from 'flowbite';
     import Breadcrumb from '@/components/breadcrumb.vue';
     import { useInnerRouter } from '@/stores/router';
-    import { onMounted } from 'vue';
+    import { computed, onMounted } from 'vue';
 
-    let items = [{}, {}]
+    let items = [{name: 'channel 45'}, {name: 'Hello world'}]
     let topics_panel: HTMLElement | null;
     let side_panel : HTMLElement | null;
     let innerRouter = useInnerRouter();
+    let routerLevel = computed(()=> innerRouter.getLevel())
     
     onMounted(()=> {
         innerRouter.rebuild("Channels");
@@ -183,6 +190,24 @@
             } else {
                 side_panel.classList.remove("hidden")
             }
+        }
+    }
+
+    const channelNavigator = (channelName: string) => {
+        while (routerLevel.value > 2) {
+            innerRouter.pop()
+        }
+        if(routerLevel.value < 2){
+            innerRouter.push(channelName)
+        }
+        innerRouter.replaceLast(channelName)
+    }
+
+    const topicNavigator = (topicName: string) => {
+        if (routerLevel.value < 3) {
+            innerRouter.push(topicName)
+        } else {
+            innerRouter.replaceLast(topicName)
         }
     }
 

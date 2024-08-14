@@ -33,20 +33,20 @@
                 <!-- Lib menu(tabs) -->
                 <div class="sticky top-0 z-20 bg-white text-sm font-medium text-center text-gray-500 border-b border-gray-200 shadow-sm shadow-gray-300 dark:text-gray-400 dark:border-gray-700">
                     <ul class="flex flex-wrap -mb-px">
-                        <li class="me-2">
-                            <a href="#" class="inline-block p-4 text-blue-600 border-b-2 border-blue-600 rounded-t-lg active dark:text-blue-500 dark:border-blue-500" aria-current="page">Videos</a>
+                        <li @click="libraryNavigator('videos')" class="me-2 cursor-pointer">
+                            <span id="videos" class="libTab inactiveLibTab inline-block p-4 border-b-2 rounded-t-lg" aria-current="page">Videos</span>
                         </li>
-                        <li class="me-2">
-                            <a href="#" class="inline-block p-4 border-b-2 border-transparent rounded-t-lg hover:text-gray-600 hover:border-gray-300 dark:hover:text-gray-300">Photos</a>
+                        <li @click="libraryNavigator('photos')" class="me-2 cursor-pointer">
+                            <span id="photos" class="libTab inactiveLibTab inline-block p-4 border-b-2 rounded-t-lg">Photos</span>
                         </li>
-                        <li class="me-2">
-                            <a href="#" class="inline-block p-4 border-b-2 border-transparent rounded-t-lg hover:text-gray-600 hover:border-gray-300 dark:hover:text-gray-300">Archives</a>
+                        <li @click="libraryNavigator('archives')" class="me-2 cursor-pointer">
+                            <span id="archives" class="libTab inactiveLibTab inline-block p-4 border-b-2 rounded-t-lg">Archives</span>
                         </li>
-                        <li class="me-2">
-                            <a href="#" class="inline-block p-4 border-b-2 border-transparent rounded-t-lg hover:text-gray-600 hover:border-gray-300 dark:hover:text-gray-300">Documents</a>
+                        <li @click="libraryNavigator('documents')" class="me-2 cursor-pointer">
+                            <span id="documents" class="libTab inactiveLibTab inline-block p-4 border-b-2 rounded-t-lg">Documents</span>
                         </li>
-                        <li>
-                            <a href="#" class="inline-block p-4 border-b-2 border-transparent rounded-t-lg hover:text-gray-600 hover:border-gray-300 dark:hover:text-gray-300">Trash</a>
+                        <li @click="libraryNavigator('trash')" class="cursor-pointer">
+                            <span id="trash" class="libTab inactiveLibTab inline-block p-4 border-b-2 rounded-t-lg">Trash</span>
                         </li>
                     </ul>
                 </div>
@@ -81,10 +81,30 @@
 
     let innerRouter = useInnerRouter();
     let url = computed(() => innerRouter.ulrContainer)
+    let libraryTabs: Array<HTMLElement> | null;
 
     onMounted(() => {
         innerRouter.rebuild("Library");
+        libraryTabs = document.querySelectorAll(".libTab");
+        let initTab = document.querySelector("#videos")
+        innerRouter.push("videos")
+        initTab?.parentElement?.dispatchEvent(new Event('click'));
     })
+
+    let libraryNavigator = (tabName: string) => {
+        libraryTabs?.forEach(tab => {
+            if(tab.classList.contains("activeLibTab")){
+                tab.classList.replace("activeLibTab", "inactiveLibTab")
+            }
+        })
+
+        libraryTabs?.forEach(tab => {
+            if(tab.id == tabName){
+                tab.classList.replace("inactiveLibTab","activeLibTab")
+                innerRouter.replaceLast(tabName)
+            }
+        });
+    }
 
     let items = [{}, {}]
 
@@ -108,5 +128,12 @@
     }
     .side_panel {
         grid-area: side_panel;
+    }
+
+    .activeLibTab {
+        @apply text-blue-600 border-blue-600 dark:text-blue-500 dark:border-blue-500
+    }
+    .inactiveLibTab {
+        @apply border-transparent hover:text-gray-600 hover:border-gray-300 dark:hover:text-gray-300
     }
 </style>

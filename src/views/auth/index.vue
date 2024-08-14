@@ -8,8 +8,8 @@
                         <span class="self-center text-xl font-semibold whitespace-nowrap dark:text-white">Note Sphere</span>
                     </a>
                     <div class="flex items-center lg:order-2">
-                        <a href="#" class="text-green-400 dark:text-white hover:bg-gray-50 focus:ring-4 focus:ring-gray-300 font-bold rounded-sm text-sm px-4 lg:px-5 py-2 lg:py-2.5 mr-2 ring-1 ring-green-400 dark:hover:bg-gray-700 focus:outline-none dark:focus:ring-gray-800">Log in</a>
-                        <span @click="$router.push('register')" class="text-white bg-green-500 hover:bg-green-600 focus:ring-4 focus:ring-green-300 font-medium rounded-sm text-sm px-4 lg:px-5 py-2 lg:py-2.5 mr-2 dark:bg-green-600 dark:hover:bg-green-700 focus:outline-none dark:focus:ring-green-800">Get started</span>
+                        <span class="login_button cursor-pointer text-green-400 dark:text-white hover:bg-gray-50 focus:ring-4 focus:ring-gray-300 font-bold rounded-sm text-sm px-4 lg:px-5 py-2 lg:py-2.5 mr-2 ring-1 ring-green-400 dark:hover:bg-gray-700 focus:outline-none dark:focus:ring-gray-800">Log in</span>
+                        <span @click="$router.push('register')" class="cursor-pointer text-white bg-green-500 hover:bg-green-600 focus:ring-4 focus:ring-green-300 font-medium rounded-sm text-sm px-4 lg:px-5 py-2 lg:py-2.5 mr-2 dark:bg-green-600 dark:hover:bg-green-700 focus:outline-none dark:focus:ring-green-800">Get started</span>
                         <button data-collapse-toggle="mobile-menu-2" type="button" class="inline-flex items-center p-2 ml-1 text-sm text-gray-500 rounded-lg lg:hidden hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-200 dark:text-gray-400 dark:hover:bg-gray-700 dark:focus:ring-gray-600" aria-controls="mobile-menu-2" aria-expanded="false">
                             <span class="sr-only">Open main menu</span>
                             <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M3 5a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM3 10a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM3 15a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z" clip-rule="evenodd"></path></svg>
@@ -31,9 +31,40 @@
             <div class="hidden lg:mt-0 lg:col-span-5 lg:flex">
                 <img src="../../assets/original-fb41d37ce95d62afa154746de0be885f.png" alt="mockup">
             </div>                
+            <div class="overlay hidden bg-gray-700/40 fixed top-0 bottom-0 left-0 right-0">
+                <svg id="cancel-overlay" class="w-6 h-6 text-white absolute right-1/3 top-[13%] cursor-pointer" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18 17.94 6M18 18 6.06 6"/>
+                </svg>
+                <login/>
+            </div>
         </div>
         <div>
             Hello
         </div>
     </section>
 </template>
+
+<script setup lang="ts">
+    import { onMounted } from 'vue';
+    import login from './login.vue';
+
+    let overlay_cancel: HTMLElement | null
+    let overlay:  HTMLElement | null
+    let loginButton:  HTMLElement | null
+
+    onMounted(() => {
+        overlay_cancel = document.querySelector("#cancel-overlay");
+        overlay = document.querySelector(".overlay")
+        loginButton = document.querySelector(".login_button")
+        overlay?.addEventListener('click', function(event){
+            overlay?.classList.add('hidden');
+        })
+        overlay_cancel?.addEventListener('click', () => {
+            overlay?.classList.add('hidden')
+        })
+        loginButton?.addEventListener('click', () => {
+            overlay?.classList.remove('hidden')
+        })
+    })
+
+</script>

@@ -31,7 +31,7 @@
             </div>
 
             <div class="body h-full overflow-y-auto">
-
+                Logged in as {{ user }}
             </div>
 
         </div>
@@ -41,7 +41,11 @@
 <script setup lang="ts">
     import Breadcrumb from '@/components/breadcrumb.vue';
     import menuTabs from '@/components/profile/menu_tabs.vue';
+    import { useAccountStore } from '@/stores/account';
+    import { computed } from 'vue';
 
+    let accountStore = useAccountStore()
+    let user = computed(() => accountStore.user)
     let items = [{}, {}, {}]
     let item = [{}, {}, {}, {}, {}, {}, {}]
 
