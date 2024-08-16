@@ -50,7 +50,7 @@
     let password = ref('')
 
     const login = ()=> {
-        let userObject = {password: password.value, emailAddress: emailAddress.value}
+        let userObject = {password: password.value, email_address: emailAddress.value}
         accountStore.login(userObject)
     }
 </script>
