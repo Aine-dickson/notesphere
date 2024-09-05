@@ -13,6 +13,7 @@
                     </svg>
                 </div>
 
+                <!-- Breadcrumb -->
                 <Breadcrumb/>
             </nav>
             <div class="flex justify-between items-end">
@@ -27,11 +28,23 @@
         </header>
 
         <!-- Main content -->
-        <div class="main h-full grid grid-col-2 border-t border-t-gray-300">
+        <div class="main h-full grid border-t border-t-gray-300">
+            <!-- Library list -->
+            <div class="library_panel w-56 border-r border-r-gray-300">
+                <ul class="flex flex-col text-sm font-medium text-gray-500 dark:text-gray-400 md:me-4 mb-4 md:mb-0 w-full">
+                    <li v-for="(item, index) in items" :key="index" @click="LibrarySelector(index.toString())" class="w-full cursor-pointer">
+                        <div :id="index.toString()" class="LibraryTab flex items-center p-4 w-full border-b border-b-gray-100 inactiveLibraryTab" aria-current="page">
+                            {{ index }}
+                        </div>
+                    </li>
+                </ul>
+            </div>
+
+            <!-- Body -->
             <div class="body h-full overflow-y-auto">
 
                 <!-- Lib menu(tabs) -->
-                <div class="sticky top-0 z-20 bg-white text-sm font-medium text-center text-gray-500 border-b border-gray-200 shadow-sm shadow-gray-300 dark:text-gray-400 dark:border-gray-700">
+                <div class="sticky top-0 z-20 justify-between items-center bg-white text-sm font-medium text-center text-gray-500 border-b border-gray-200 shadow-sm shadow-gray-300 dark:text-gray-400 dark:border-gray-700" :class="{flex: loaded_library, hidden: !loaded_library}">
                     <ul class="flex flex-wrap -mb-px">
                         <li @click="libraryNavigator('videos')" class="me-2 cursor-pointer">
                             <span id="videos" class="libTab inactiveLibTab inline-block p-4 border-b-2 rounded-t-lg" aria-current="page">Videos</span>
@@ -49,15 +62,40 @@
                             <span id="trash" class="libTab inactiveLibTab inline-block p-4 border-b-2 rounded-t-lg">Trash</span>
                         </li>
                     </ul>
+                    <div class="pane_activators flex space-x-1 mr-4">
+                            <div @click="toggleLibraryPanes('left')" data-tooltip-target="toggle_topics" class="rounded-md bg-slate-800 cursor-pointer">
+                                <svg class="w-6 h-6 text-gray-300 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+                                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m17 16-4-4 4-4m-6 8-4-4 4-4"/>
+                                </svg>
+                            </div>
+                            <div id="toggle_topics" role="tooltip" class="absolute z-10 invisible inline-block px-3 py-2 text-sm font-medium text-white transition-opacity duration-300 bg-gray-400 rounded-lg shadow-sm opacity-0 tooltip dark:bg-gray-700">
+                                Toggle library list
+                                <div class="tooltip-arrow" data-popper-arrow></div>
+                            </div>
+
+                            <div @click="toggleLibraryPanes('right')" data-tooltip-target="toggle_channels" class="rounded-md bg-slate-800 cursor-pointer">
+                                <svg class="w-6 h-6 text-gray-300 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+                                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m7 16 4-4-4-4m6 8 4-4-4-4"/>
+                                </svg>
+                            </div>
+                            <div id="toggle_channels" role="tooltip" class="absolute z-10 invisible inline-block px-3 py-2 text-sm font-medium text-white transition-opacity duration-300 bg-gray-400 rounded-lg shadow-sm opacity-0 tooltip dark:bg-gray-700">
+                                Toggle favorites
+                                <div class="tooltip-arrow" data-popper-arrow></div>
+                            </div>
+                        </div>
                 </div>
 
-                <div>
-                    <folders/>
+                <div class="h-full">
+                    <folders v-if="loaded_library"/>
+                    <div v-else class="flex flex-col items-center justify-center h-full w-full">
+                        <p>No selected library</p>
+                        <p>Select library from left pane to open</p>
+                    </div>
                 </div>
             </div>
 
             <!-- Aside panel -->
-            <div class="side_panel relative border-l border-l-gray-300 h-full p-2 w-64">
+            <div class="favorites_panel relative border-l border-l-gray-300 h-full p-2 w-64">
                 <span class="font-bold text-md p-2">Starred files</span>
                 <div class="absolute top-0 bottom-0 w-full overflow-y-auto">
                     <ul class="mt-10 p-2">
@@ -77,19 +115,42 @@
     import Breadcrumb from '@/components/breadcrumb.vue';
 
     import { useInnerRouter } from '@/stores/router';
-    import { computed, onMounted } from 'vue';
+    import { computed, onMounted, ref, type Ref } from 'vue';
+    import { initTooltips } from 'flowbite';
 
     let innerRouter = useInnerRouter();
     let url = computed(() => innerRouter.ulrContainer)
     let libraryTabs: Array<HTMLElement> | null;
+    let LibraryTabs: Array<HTMLElement> | null;
+    let library_panel: HTMLElement | null;
+    let favorites_panel: HTMLElement | null;
+    let loaded_library: Ref<{}> | Ref<null> = ref(null)
 
     onMounted(() => {
         innerRouter.rebuild("Library");
+        library_panel = document.querySelector(".library_panel")
+        favorites_panel = document.querySelector(".favorites_panel")
         libraryTabs = document.querySelectorAll(".libTab");
-        let initTab = document.querySelector("#videos")
-        innerRouter.push("videos")
-        initTab?.parentElement?.dispatchEvent(new Event('click'));
+        initTooltips()
     })
+
+    const toggleLibraryPanes = (direction: string) => {
+        if(direction == "left"){
+            console.log(library_panel)
+            if(!library_panel?.classList.contains("hidden")){
+                library_panel?.classList.add("hidden")
+            } else {
+                library_panel.classList.remove("hidden")
+            }
+        } else if(direction == "right") {
+            console.log(favorites_panel)
+            if(!favorites_panel?.classList.contains("hidden")){
+                favorites_panel?.classList.add("hidden")
+            } else {
+                favorites_panel.classList.remove("hidden")
+            }
+        }
+    }
 
     let libraryNavigator = (tabName: string) => {
         libraryTabs?.forEach(tab => {
@@ -101,8 +162,39 @@
         libraryTabs?.forEach(tab => {
             if(tab.id == tabName){
                 tab.classList.replace("inactiveLibTab","activeLibTab")
+                if (innerRouter.getLevel() < 3){
+                    innerRouter.push(tabName)
+                } else {
+                    innerRouter.replaceLast(tabName)
+                }
+            }
+        });
+    }
+
+    let LibrarySelector = (tabName: string) => {
+        LibraryTabs = document.querySelectorAll('.LibraryTab')
+        LibraryTabs?.forEach(tab => {
+            if(tab.classList.contains("activeLibraryTab")){
+                tab.classList.replace("activeLibraryTab", "inactiveLibraryTab")
+            }
+        })
+
+        LibraryTabs?.forEach(tab => {
+            if(tab.id == tabName){
+                tab.classList.replace("inactiveLibraryTab","activeLibraryTab")
+            }
+
+            if (innerRouter.getLevel() < 2){
+                innerRouter.push(tabName)
+            } else if(innerRouter.getLevel() > 2){
+                innerRouter.pop()
+                innerRouter.replaceLast(tabName)
+            } else {
                 innerRouter.replaceLast(tabName)
             }
+
+            loaded_library.value = items[Number(tabName)]
+            libraryNavigator('videos')
         });
     }
 
@@ -120,16 +212,24 @@
     }
     .main{
         grid-area: main;
-        grid-template-columns:1fr auto;
-        grid-template-areas: "body side_panel";
+        grid-template-columns:auto 1fr auto;
+        grid-template-areas: "library_panel body favorites_panel";
     }
     .body{
         grid-area: body;
     }
-    .side_panel {
-        grid-area: side_panel;
+    .favorites_panel {
+        grid-area: favorites_panel;
     }
-
+    .library_panel{
+        grid-area: library_panel;    
+    }
+    .activeLibraryTab {
+        @apply text-white bg-blue-700 dark:bg-blue-600
+    }
+    .inactiveLibraryTab {
+        @apply hover:text-gray-900 hover:bg-gray-100 dark:bg-gray-800 dark:hover:bg-gray-700 dark:hover:text-white
+    }
     .activeLibTab {
         @apply text-blue-600 border-blue-600 dark:text-blue-500 dark:border-blue-500
     }

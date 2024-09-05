@@ -1,8 +1,21 @@
 <template>
     <div class="flex justify-between p-2 items-end bg-gray-400">
         <div class="flex space-x-3">
-            <span class="cursor-pointer">File</span>
-            <span class="cursor-pointer">Insert Image</span>
+            <span id="fileDropdownLink" data-dropdown-toggle="fileDropdown" class="cursor-pointer">File</span>
+            <div id="fileDropdown" class="z-10 hidden font-normal divide-y divide-gray-100 rounded-lg shadow w-44 dark:bg-gray-700 dark:divide-gray-600">
+                <files_tab/>
+            </div>
+            <span  id="insertDropdownLink" data-dropdown-toggle="insertDropdown" class="cursor-pointer">Insert</span>
+            <div id="insertDropdown" class="z-10 hidden font-normal divide-y divide-gray-100 rounded-lg shadow w-44 dark:bg-gray-700 dark:divide-gray-600">
+                <insert_tab/>
+            </div>
+            <div v-if="loaded_file.name.length > 0" id="fileNameField" @focusout="save_as" data-tooltip-target="file_name" contenteditable="true" class="hover:outline hover:outline-1 hover:outline-offset-2 hover:outline-slate-300">
+                {{ fileName }} h
+            </div>
+            <div id="file_name" role="tooltip" class="absolute z-10 invisible inline-block px-3 py-2 text-sm font-medium text-black transition-opacity duration-300 bg-gray-200 rounded-lg shadow-sm opacity-0 tooltip dark:bg-gray-700">
+                Rename file
+                <div class="tooltip-arrow" data-popper-arrow></div>
+            </div>
         </div>
 
         <form class="max-w-xl">   
@@ -23,3 +36,38 @@
         </div>
     </div>
 </template>
+
+<script setup lang="ts">
+    import files_tab from './files_tab.vue';
+    import insert_tab from './insert_tab.vue'
+
+    import { computed, onMounted, ref } from 'vue';
+    import { initDropdowns, initTooltips } from 'flowbite';
+    import { useFileStore } from '@/stores/fileStore';
+
+    let fileStore = useFileStore()
+    let fileNameElement: HTMLElement | null;
+    let loaded_file = computed(() => fileStore.loaded_file)
+    let fileName: string | undefined = loaded_file.value.name;
+
+    onMounted(() => {
+      initDropdowns()  
+      initTooltips()
+
+      fileNameElement = document.querySelector('#fileNameField')
+      fileNameElement?.addEventListener('input', ()=> {
+        fileName = fileNameElement?.innerText
+      })
+    })
+
+    let save_as = () => {
+        if (fileName == undefined || fileName.length < 1) {
+            return
+        }
+
+        if (loaded_file.value != undefined) {
+            
+            fileStore.save_file_as(fileName)
+        }
+    }
+</script>
