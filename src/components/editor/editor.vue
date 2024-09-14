@@ -8,6 +8,8 @@
             </div>
             <div id="preview" class="preview markdown absolute right-0 top-0 bottom-0 left-1/2 z-40">
             </div>
+
+            <!-- Modal(overlay) for creating or opening a new file window -->
             <div v-if="activeModal" id="authentication-modal" tabindex="-1" aria-hidden="true" class="overflow-y-auto overflow-x-hidden absolute top-0 right-0 left-0 z-50 justify-center items-center w-full md:inset-0 h-[calc(100%-1rem)] max-h-full">
                 <div class="relative p-4 w-full max-w-md max-h-full m-auto">
                     <!-- Modal content -->

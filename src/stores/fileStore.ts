@@ -2,22 +2,18 @@ import { defineStore } from "pinia";
 import api from "./api";
 import { ref, type Ref } from "vue";
 
-interface TypeFile {
-    name: string,
-    content: string,
-    id: string
-};
 
 export const useFileStore = defineStore('fileStore', {
     state: ()=> {
-        let loaded_file: Ref<TypeFile> = ref({
-            name: "",
+        let loaded_file = ref({
+            name: "hello",
             content: "",
             id: ""
         })
+        console.log(loaded_file.value)
 
-        let open_files: TypeFile[];
-        let owned_files: TypeFile[];
+        let open_files: [];
+        let owned_files: [];
         let active_modal: Ref<null> | Ref<string> = ref(null);
 
         let load_file = (file_name: string, file_id: string)=> {

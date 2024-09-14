@@ -9,7 +9,7 @@
             <div id="insertDropdown" class="z-10 hidden font-normal divide-y divide-gray-100 rounded-lg shadow w-44 dark:bg-gray-700 dark:divide-gray-600">
                 <insert_tab/>
             </div>
-            <div v-if="loaded_file.name.length > 0" id="fileNameField" @focusout="save_as" data-tooltip-target="file_name" contenteditable="true" class="hover:outline hover:outline-1 hover:outline-offset-2 hover:outline-slate-300">
+            <div id="fileNameField" @focusout="save_as" data-tooltip-target="file_name" contenteditable="true" class="hover:outline hover:outline-1 hover:outline-offset-2 hover:outline-slate-300">
                 {{ fileName }} h
             </div>
             <div id="file_name" role="tooltip" class="absolute z-10 invisible inline-block px-3 py-2 text-sm font-medium text-black transition-opacity duration-300 bg-gray-200 rounded-lg shadow-sm opacity-0 tooltip dark:bg-gray-700">
@@ -48,26 +48,28 @@
     let fileStore = useFileStore()
     let fileNameElement: HTMLElement | null;
     let loaded_file = computed(() => fileStore.loaded_file)
-    let fileName: string | undefined = loaded_file.value.name;
+    console.log(loaded_file.value)
 
+    let fileName = loaded_file.value;
+    
     onMounted(() => {
       initDropdowns()  
       initTooltips()
 
       fileNameElement = document.querySelector('#fileNameField')
       fileNameElement?.addEventListener('input', ()=> {
-        fileName = fileNameElement?.innerText
+        // fileName = fileNameElement?.innerText
       })
     })
 
-    let save_as = () => {
-        if (fileName == undefined || fileName.length < 1) {
-            return
-        }
+    // let save_as = () => {
+    //     if (fileName == undefined || fileName.length < 1) {
+    //         return
+    //     }
 
-        if (loaded_file.value != undefined) {
+    //     if (loaded_file.value != undefined) {
             
-            fileStore.save_file_as(fileName)
-        }
-    }
+    //         fileStore.save_file_as(fileName)
+    //     }
+    // }
 </script>
