@@ -17,9 +17,8 @@ export const useSpaceSocketStore = defineStore('spaceSocketStore', {
 
         socket.emit('join-room', { room });
         socket.on('new-peer', async (data)=> {
-            let newOffer = peerConnection.value.createOffer()
-            console.log(data);
-            socket.emit('signal', {signal: newOffer, room} )
+            let newOffer = await peerConnection.value.createOffer()
+            socket.emit('signal', {signal: newOffer, peerId: data.id, room} )
         })
 
         // Get local media stream
@@ -52,6 +51,7 @@ export const useSpaceSocketStore = defineStore('spaceSocketStore', {
         
         // Send ICE candidates to the server
         peerConnection.value.onicecandidate = (event) => {
+            console.log("here")
           if (event.candidate) {
             socket.emit('signal', { signal: event.candidate, room });
           }
@@ -59,6 +59,7 @@ export const useSpaceSocketStore = defineStore('spaceSocketStore', {
 
         // Handle remote stream
         peerConnection.value.ontrack = (event) => {
+            console.log('received track')
           remoteStream.value = event.streams[0];
         };
         
