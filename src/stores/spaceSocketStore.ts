@@ -13,7 +13,7 @@ export const useSpaceSocketStore = defineStore('spaceSocketStore', {
       try {
         // Initialize Socket.IO connection
         socket = io('https://notesphere-sys-production.up.railway.app/', { transports: ['websocket']});
-        peerConnection.value = new RTCPeerConnection();
+        peerConnection.value = new RTCPeerConnection({iceServers: [{ urls: 'stun:stun.l.google.com:19302' }]});
 
         socket.emit('join-room', { room });
         socket.on('new-peer', async (data)=> {
@@ -32,27 +32,32 @@ export const useSpaceSocketStore = defineStore('spaceSocketStore', {
         // Add local tracks to peer connection
         localStream.value.getTracks().forEach(track => {
           peerConnection.value.addTrack(track, localStream.value);
+          console.log(track)
         });
 
         
         // Handle incoming ICE candidates and signals
         socket.on('signal', async (data) => {
             if (data.type === 'offer') {
+                console.log("got an offer")
                 await peerConnection.value.setRemoteDescription(new RTCSessionDescription(data));
                 const answer = await peerConnection.value.createAnswer();
                 await peerConnection.value.setLocalDescription(answer);
+                console.log("Sent an answer")
                 socket.emit('signal', { signal: answer, room });
             } else if (data.type === 'answer') {
+                console.log("Got an answer")
                 await peerConnection.value.setRemoteDescription(new RTCSessionDescription(data));
             } else if (data.candidate) {
+                console.log("Its an ICE candidate")
                 await peerConnection.value.addIceCandidate(new RTCIceCandidate(data));
             }
         });
         
         // Send ICE candidates to the server
         peerConnection.value.onicecandidate = (event) => {
-            console.log("here")
-          if (event.candidate) {
+            if (event.candidate) {
+              console.log("An ICE candidate generated")
             socket.emit('signal', { signal: event.candidate, room });
           }
         };
@@ -60,7 +65,7 @@ export const useSpaceSocketStore = defineStore('spaceSocketStore', {
         // Handle remote stream
         peerConnection.value.ontrack = (event) => {
             console.log('received track')
-          remoteStream.value = event.streams[0];
+            remoteStream.value = event.streams[0];
         };
         
         // Join room

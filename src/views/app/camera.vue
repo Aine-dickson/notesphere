@@ -198,7 +198,7 @@
 
         <div>
           <ul>
-            <videoElement :stream="remoteStream"/>
+            <videoElement/>
           </ul>
         </div>
       </div>

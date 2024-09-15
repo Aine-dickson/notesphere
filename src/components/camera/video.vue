@@ -1,5 +1,5 @@
 <template>
-    <div class="video w-[90%] h-36 overflow-hidden m-auto rounded-md cursor-pointer">
+    <div class="video w-[90%] h-36 overflow-hidden m-auto rounded-md border border-slate-300 cursor-pointer">
         <video class="video w-full h-full object-cover" autoplay muted>
             <source src="" type="video/mp4">
             Your browser does not support the video tag.
@@ -24,7 +24,7 @@
       let thisVideo = document.querySelector(`.video`)
       thisVideo.srcObject = computed(() => spaceSocket.remoteStream).value;
       thisVideo?.addEventListener('click', ()=>{
-
+        console.log('clicked')
       })
     })
 </script>
