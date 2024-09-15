@@ -1,7 +1,6 @@
 import { ref, type Ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { defineStore } from 'pinia'
-import axios from 'axios'
 import api from './api'
 
 export const useAccountStore = defineStore('accountStore', {
