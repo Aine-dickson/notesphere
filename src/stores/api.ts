@@ -4,6 +4,7 @@ import axios from 'axios';
 const api = axios.create({
   baseURL: 'https://notesphere-sys-production.up.railway.app:3000',
   timeout: 5000,
+  withCredentials: true
 });
 
 export default api;
