@@ -12,7 +12,7 @@ export const useSpaceSocketStore = defineStore('spaceSocketStore', {
     const initializeSocket = async (room = 'some-room') => {
       try {
         // Initialize Socket.IO connection
-        socket = io('https://notesphere-sys-production.up.railway.app/', { transports: ['websocket'], timeout: 10000});
+        socket = io('https://notesphere-sys-production.up.railway.app/', { transports: ['websocket']});
         peerConnection.value = new RTCPeerConnection();
 
         socket.emit('join-room', { room });
