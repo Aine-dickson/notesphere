@@ -17,8 +17,8 @@ export const useSpaceSocketStore = defineStore('spaceSocketStore', {
     };
 
     let startCall = (ownName: string) => {
-      // socket = ref(io("https://notesphere-sys-production.up.railway.app/space", {transports: ['websocket']}))
-      socket = ref(io("http://localhost:3001/space", {transports: ['websocket']}))
+      socket = ref(io("https://notesphere-sys-production.up.railway.app/space", {transports: ['websocket']}))
+      // socket = ref(io("http://localhost:3001/space", {transports: ['websocket']}))
 
       socket.value.on('new_client', (clientId: string, clientName: string) => {
         createConnection({clientId, clientName}, ownName)
