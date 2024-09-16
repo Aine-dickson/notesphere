@@ -17,8 +17,8 @@ export const useSpaceSocketStore = defineStore('spaceSocketStore', {
     };
 
     let startCall = async (ownName: string) => {
-      socket = ref(io("https://notesphere-sys-production.up.railway.app/space", {transports: ['websocket']}))
-      // socket = ref(io("http://localhost:3001/space", {transports: ['websocket']}))
+      // socket = ref(io("https://notesphere-sys-production.up.railway.app/space", {transports: ['websocket']}))
+      socket = ref(io("http://localhost:3001/space", {transports: ['websocket']}))
 
       socket.value.on('new_client', async (clientId: string, clientName: string) => {
         await createConnection({clientId, clientName}, ownName)
@@ -31,7 +31,6 @@ export const useSpaceSocketStore = defineStore('spaceSocketStore', {
     }
 
     let createConnection = async (clientInfo: {clientId: string, clientName: string}, ownName: string)=> {
-      console.log("creating connection")
       let client = clientInfo.clientId
       try{
         peerConnections.value[client] = {connection: new RTCPeerConnection(configuration), name: clientInfo.clientName}
@@ -46,7 +45,6 @@ export const useSpaceSocketStore = defineStore('spaceSocketStore', {
         await peerConnections.value[client].connection.setLocalDescription(offer)
 
         peerConnections.value[client].connection.onicecandidate = (event) => {
-          console.log("Obtained ICE candidate")
           if(event.candidate){
             socket.value.emit('signal', event.candidate)
           }
@@ -64,10 +62,8 @@ export const useSpaceSocketStore = defineStore('spaceSocketStore', {
     }
 
     let handleServerSignal = async(data: any, ownName: string) => {
-      console.log("yoo")
       if (data.payload.type == "offer") {
         peerConnections.value[data.id] = {connection: new RTCPeerConnection(configuration), name: data.payload.name}
-        console.log('Signaller is known as: ', data.payload)
 
         let sessionDescription = new RTCSessionDescription(data.payload.sdp);
         await peerConnections.value[data.id].connection.setRemoteDescription(sessionDescription);
@@ -78,7 +74,7 @@ export const useSpaceSocketStore = defineStore('spaceSocketStore', {
         })
 
         let answer = await peerConnections.value[data.id].connection.createAnswer()
-        peerConnections.value[data.id].connection.setLocalDescription(answer)
+        await peerConnections.value[data.id].connection.setLocalDescription(answer)
 
         peerConnections.value[data.id].connection.onicecandidate = (event) => {
           if(event.candidate){
@@ -89,12 +85,11 @@ export const useSpaceSocketStore = defineStore('spaceSocketStore', {
         peerConnections.value[data.id].connection.ontrack = (event) => {
           remoteStreams.value.push({remoteStream: event.streams[0], name: peerConnections.value[data.id].name})
         }
+
         let localDesc = peerConnections.value[data.id].connection.localDescription
-        console.log(localDesc)
         socket.value.emit('signal', {type: answer.type, name: ownName, sdp: localDesc})
 
       } else if(data.payload.type == "answer") {
-        console.log(data)
         let sessionDescription = new RTCSessionDescription(data.payload.sdp);
         await peerConnections.value[data.id].connection.setRemoteDescription(sessionDescription)
 
