@@ -6,7 +6,7 @@ export const useSpaceSocketStore = defineStore('spaceSocketStore', {
   state: () => {
     let localStream = ref(new MediaStream());
     let remoteStreams:Ref<{remoteStream: MediaStream, name: string}[]> = ref([]);
-    let peerConnections: Ref<Record<string, {connection: RTCPeerConnection, name: string}>>;
+    let peerConnections: Ref<Record<string, {connection: RTCPeerConnection, name: string}>> = ref({});
     let socket: Ref<Socket>;
     const configuration = {
       iceServers: [
@@ -16,26 +16,25 @@ export const useSpaceSocketStore = defineStore('spaceSocketStore', {
       ]
     };
 
-    let startCall = (ownName: string) => {
-      socket = ref(io("https://notesphere-sys-production.up.railway.app/space", {transports: ['websocket']}))
-      // socket = ref(io("http://localhost:3001/space", {transports: ['websocket']}))
+    let startCall = async (ownName: string) => {
+      // socket = ref(io("https://notesphere-sys-production.up.railway.app/space", {transports: ['websocket']}))
+      socket = ref(io("http://localhost:3001/space", {transports: ['websocket']}))
 
-      socket.value.on('new_client', (clientId: string, clientName: string) => {
-        createConnection({clientId, clientName}, ownName)
+      socket.value.on('new_client', async (clientId: string, clientName: string) => {
+        await createConnection({clientId, clientName}, ownName)
       })
 
-      socket.value.on('signal', (data) => {
-        handleServerSignal(data, ownName)
+      socket.value.on('signal', async (data) => {
+        await handleServerSignal(data, ownName)
       })
 
     }
 
     let createConnection = async (clientInfo: {clientId: string, clientName: string}, ownName: string)=> {
+      console.log("creating connection")
       let client = clientInfo.clientId
       try{
-        
-        peerConnections.value[client].connection = new RTCPeerConnection(configuration)
-        peerConnections.value[client].name = clientInfo.clientName
+        peerConnections.value[client] = {connection: new RTCPeerConnection(configuration), name: clientInfo.clientName}
   
         localStream.value = await navigator.mediaDevices.getUserMedia({video: true, audio: true})
 
@@ -48,8 +47,8 @@ export const useSpaceSocketStore = defineStore('spaceSocketStore', {
 
         peerConnections.value[client].connection.onicecandidate = (event) => {
           console.log("Obtained ICE candidate")
-          if(event.type == 'candidate'){
-            socket.value.emit('signal', event)
+          if(event.candidate){
+            socket.value.emit('signal', event.candidate)
           }
         }
 
@@ -58,17 +57,17 @@ export const useSpaceSocketStore = defineStore('spaceSocketStore', {
           console.log("added a remote track")
         }
 
-        socket.value.emit('signal', {type: offer.type, name: ownName, sdp: offer.sdp})
+        socket.value.emit('signal', {type: offer.type, name: ownName, sdp: peerConnections.value[client].connection.localDescription})
       } catch(error) {
         console.log("Error while starting peer connection: ", error)
       }
     }
 
     let handleServerSignal = async(data: any, ownName: string) => {
+      console.log("yoo")
       if (data.payload.type == "offer") {
-        peerConnections.value[data.id].connection = new RTCPeerConnection(configuration)
-        peerConnections.value[data.id].name = data.payload.name
-        console.log('Signaller is known as: ', peerConnections.value[data.id])
+        peerConnections.value[data.id] = {connection: new RTCPeerConnection(configuration), name: data.payload.name}
+        console.log('Signaller is known as: ', data.payload)
 
         let sessionDescription = new RTCSessionDescription(data.payload.sdp);
         await peerConnections.value[data.id].connection.setRemoteDescription(sessionDescription);
@@ -82,18 +81,20 @@ export const useSpaceSocketStore = defineStore('spaceSocketStore', {
         peerConnections.value[data.id].connection.setLocalDescription(answer)
 
         peerConnections.value[data.id].connection.onicecandidate = (event) => {
-          if(event.type == "candidate"){
-            socket.value.emit('signal', event)
+          if(event.candidate){
+            socket.value.emit('signal', event.candidate)
           }
         }
 
         peerConnections.value[data.id].connection.ontrack = (event) => {
           remoteStreams.value.push({remoteStream: event.streams[0], name: peerConnections.value[data.id].name})
         }
-
-        socket.value.emit('signal', {type: answer.type, name: ownName, sdp: answer.sdp})
+        let localDesc = peerConnections.value[data.id].connection.localDescription
+        console.log(localDesc)
+        socket.value.emit('signal', {type: answer.type, name: ownName, sdp: localDesc})
 
       } else if(data.payload.type == "answer") {
+        console.log(data)
         let sessionDescription = new RTCSessionDescription(data.payload.sdp);
         await peerConnections.value[data.id].connection.setRemoteDescription(sessionDescription)
 

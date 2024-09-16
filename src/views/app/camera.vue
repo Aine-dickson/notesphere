@@ -252,7 +252,7 @@ onMounted(async () => {
   shared_panel_tabs = document.querySelectorAll('.shared_panel_tab')
   localVideo = document.querySelector("#localVideo")
 
-  spaceSocketStore.startCall(accountStore.user?.email_address)
+  await spaceSocketStore.startCall(accountStore.user?.email_address)
   localVideo.srcObject = localStream.value
 
   attachToggleListner()
