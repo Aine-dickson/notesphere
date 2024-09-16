@@ -198,7 +198,9 @@
 
         <div>
           <ul>
-            <videoElement/>
+            <li v-for="(stream, index) in remoteStreams" :key="index" :stream="stream.remoteStream" :name="stream.name">
+              <videoElement/>
+            </li>
           </ul>
         </div>
       </div>
@@ -219,6 +221,7 @@ import { initTooltips } from 'flowbite'
 import { useInnerRouter } from '@/stores/router'
 import { useCameraStore } from '@/stores/cameraStore'
 import { useSpaceSocketStore } from '@/stores/spaceSocketStore'
+import { useAccountStore } from '@/stores/account'
 import { computed, onMounted } from 'vue'
 
 let items = [{ name: 'channel 45' }, { name: 'Hello world' }]
@@ -227,8 +230,9 @@ let side_panel: HTMLElement | null
 let innerRouter = useInnerRouter()
 let cameraStore = useCameraStore()
 let spaceSocketStore = useSpaceSocketStore()
+let accountStore = useAccountStore()
 let localStream = computed(() => spaceSocketStore.localStream)
-let remoteStream = computed(() => spaceSocketStore.remoteStream)
+let remoteStreams = computed(() => spaceSocketStore.remoteStreams)
 let isSidePanel = computed(() => cameraStore.is_sidePanel)
 let loadedSpace = computed(() => cameraStore.loaded_space)
 let active_shared_tab = computed(() => cameraStore.active_shared_tab)
@@ -248,7 +252,7 @@ onMounted(async () => {
   shared_panel_tabs = document.querySelectorAll('.shared_panel_tab')
   localVideo = document.querySelector("#localVideo")
 
-  await spaceSocketStore.initializeSocket()
+  spaceSocketStore.startCall(accountStore.user?.email_address)
   localVideo.srcObject = localStream.value
 
   attachToggleListner()
