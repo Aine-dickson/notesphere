@@ -43,6 +43,21 @@ export const useFileStore = defineStore('fileStore', {
             }
         },
 
+        reset() {
+            this.recentlyOpenedFiles = [] as { id: string; name: string; lastOpenedAt: string }[],
+            this.active_modal = null as string | null,
+            this.menuState = { context: '', on: false },
+            this.previewMode = true,
+            this.loaded_file = {
+                name: "", type: '', body: '', id: '',
+                collaborators: [], associated_folder: '',
+                owner: '', library: '', comments: [],
+                viewers: []
+            } as LocalFile,
+            this.files = [] as LocalFile[],
+            this.initialized = false 
+        },
+
         setPreview(option: boolean) {
             this.previewMode = option
         },

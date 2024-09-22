@@ -15,6 +15,15 @@ export const useLibraryStore = defineStore('libraryStore', {
     },
 
     actions: {
+      reset(){
+        this.libraries = [] as Library[],
+        this.selectedLibrary = {loaded: false, value: {name: '', folders: [], id: '', files: [], owner: ''}} as {loaded: boolean, value: Library},
+        this.selectedLibtab = 'all' as string,
+        this.creationState = {state: false, source: ''} as {state: boolean, source: string},
+        this.selectedFolder = {name: '', id: '', library: ''} as Folder,
+        this.achives = [] as string[],
+        this.initialized = false as boolean
+      },
       async initialize() {
         if (this.initialized) return; // If already initialized, do nothing
 

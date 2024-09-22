@@ -3,6 +3,11 @@ import { useRouter } from 'vue-router'
 import { defineStore } from 'pinia'
 import api from './api'
 
+import { useCameraStore } from './cameraStore'
+import { useFileStore } from './fileStore'
+import { useHomeStore } from './homeStore'
+import { useLibraryStore } from './libraryStore'
+
 export const useAccountStore = defineStore('accountStore', {
     state: ()=> {
         let user = ref(null)
@@ -42,6 +47,12 @@ export const useAccountStore = defineStore('accountStore', {
             let response = await api.post('/user/logout')
             if(response.status == 201 || response.status == 200){
                 user.value = null
+
+                useCameraStore().reset()
+                useFileStore().reset()
+                useHomeStore().$reset()
+                useLibraryStore().reset()
+
                 router.push('/')
             }
         }

@@ -13,6 +13,18 @@ export const useHomeStore = defineStore('homeStore', {
       {owner: 'Ssenono', updatedAt: '21:23', id: 'cy3862081', kind: 'full'}
     ]
 
+    let reset = () => {
+      activeTab = ref('')
+      creating_new = ref({ on: false, value: '' })
+      spaces = [{}, {}, {}, {}]
+      feed = [
+        {owner: 'Dickson', updatedAt: '22:22', id: '3u2702e3ui', kind: 'full'},
+        {owner: 'Kyeyune', updatedAt: '21:56', id: 'w383ywo380', kind: 'textOnly'},
+        {owner: 'Ssekyene', updatedAt: '21:40', id: 'hdy263487i', kind: 'photoOnly'},
+        {owner: 'Ssenono', updatedAt: '21:23', id: 'cy3862081', kind: 'full'}
+      ]
+    }
+
     let activateTab = (tabName: string) => {
       activeTab.value = tabName
     }

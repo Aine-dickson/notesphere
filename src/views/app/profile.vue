@@ -31,7 +31,7 @@
             </div>
 
             <div class="body h-full overflow-y-auto">
-                Logged in as {{ user }}
+                Logged in as {{ user.email_address }}
             </div>
 
         </div>
