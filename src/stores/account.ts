@@ -7,11 +7,16 @@ export const useAccountStore = defineStore('accountStore', {
     state: ()=> {
         let user = ref(null)
         let router = useRouter()
+        let sideBarState: Ref<Boolean> = ref(false)
+
+        let changeSideBarState = (state: boolean)=>{
+            sideBarState.value = state
+        }
     
         let login = async (loginObject: {password: string, email_address: string})=> {
             try {
                 let response = await api.post('/user/login', loginObject)
-                if(response.status == 201){
+                if(response.status == 201 || response.status == 200){
                     user.value = response.data
                     router.push('/')
                 }
@@ -23,7 +28,7 @@ export const useAccountStore = defineStore('accountStore', {
         let signup = async (userObject: {password: string, email_address: string})=> {
             try{
                 let response = await api.post('/user/signup', userObject)
-                if(response.status == 201){
+                if(response.status == 201 || response.status == 200){
                     user.value = response.data
                     router.push('/')
                 }
@@ -33,7 +38,7 @@ export const useAccountStore = defineStore('accountStore', {
             }
         }
 
-        return {user, login, signup}
+        return {user, sideBarState, login, signup, changeSideBarState}
     },
     persist: true
 })

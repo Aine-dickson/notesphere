@@ -63,6 +63,12 @@ const router = createRouter({
           name:'create-media',
           component: () => import('@/views/app/camera.vue'),
           meta: {requireAuth: true}
+        },
+        {
+          path: 'post/:id',
+          name: 'post',
+          component: () => import('@/views/app/postPreview.vue'),
+          meta: {requireAuth: true}
         }
       ]
     },

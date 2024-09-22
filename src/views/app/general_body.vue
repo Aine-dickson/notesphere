@@ -1,10 +1,10 @@
 <template>
     <div class="app_container h-full max-h-full overflow-hidden">
         <div class="side_bar relative z-40">
-            <div class="h-full max-h-full side-bar" :class="{hidden: sideBarOff}">
+            <div class="h-full max-h-full side-bar" :class="{hidden: sideBarState}">
                 <sideBar/>
             </div>
-            <div class="menu-drawer max-h-full h-full" :class="{hidden: !sideBarOff}">
+            <div class="menu-drawer max-h-full h-full" :class="{hidden: !sideBarState}">
                 <drawer/>
             </div>
         </div>
@@ -18,9 +18,11 @@
     import sideBar from '../../components/side_bar.vue';
     import drawer from '../../components/drawer.vue';
 
-    import { onMounted, ref } from 'vue'
+    import { computed, onMounted, ref } from 'vue'
+    import { useAccountStore } from '@/stores/account';
 
-    let sideBarOff = ref(false)
+    let accountStore = useAccountStore()
+    let sideBarState = computed(() => accountStore.sideBarState)
 
     let drawerManager = () => {
         const drawer_trigger = document.getElementById('trigger');
@@ -30,12 +32,12 @@
         // Add an event listener
         drawer_trigger?.addEventListener('click', ()=> {
             drawer?.classList.remove('-translate-x-full');
-            sideBarOff.value = true
+            accountStore.changeSideBarState(true)
         });
 
         drawer_off?.addEventListener('click', ()=> {
             drawer?.classList.add('-translate-x-full');
-            sideBarOff.value = false
+            accountStore.changeSideBarState(false)
         })
     }
     

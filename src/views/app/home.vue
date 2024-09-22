@@ -30,13 +30,13 @@
                 <!-- Dropdown menu -->
                 <div id="create_dropdown" class="hidden absolute z-30 -bottom-28 right-0 bg-gray-100 divide-y divide-gray-100 rounded-lg shadow w-44 dark:bg-gray-700">
                     <ul class="text-sm text-gray-700 dark:text-gray-200" aria-labelledby="dropdownDefaultButton">
-                        <li>
+                        <li @click="homeStore.enableCreating('post')">
                             <span class="cursor-pointer block px-4 py-2 hover:bg-gray-200 dark:hover:bg-gray-600 dark:hover:text-white">Post</span>
                         </li>
-                        <li>
+                        <li @click="homeStore.enableCreating('spaces')">
                             <span class="cursor-pointer block px-4 py-2 hover:bg-gray-200 dark:hover:bg-gray-600 dark:hover:text-white">Space</span>
                         </li>
-                        <li>
+                        <li @click="homeStore.enableCreating('challenges')">
                             <span class="cursor-pointer block px-4 py-2 hover:bg-gray-200 dark:hover:bg-gray-600 dark:hover:text-white">Challenge</span>
                         </li>
                     </ul>
@@ -47,7 +47,31 @@
 
         <!-- Main content -->
         <div class="main h-full grid grid-col-2 border-t border-t-gray-300">
-            <div class="body h-full overflow-y-auto">
+            <div class="body relative h-full overflow-y-auto">
+
+                <!-- Home modal for creating new elements, i.e. post, space, challenge -->
+                <div v-if="inCreation.on" class="overlay absolute z-30 top-0 bottom-0 w-full">
+                    <div class="relative w-[50%] m-auto mt-16 bg-white border rounded-lg shadow-lg dark:bg-gray-700">
+                        <!-- Modal header -->
+                        <div class="flex items-center justify-between p-4 md:p-5 border-b rounded-t dark:border-gray-600">
+                            <h3 class="text-xl font-conditionsemibold text-gray-900 dark:text-white">
+                                <span v-if="inCreation.value == 'spaces'">Provide Space attributes</span>
+                                <span v-if="inCreation.value == 'post'">Provide Post attributes</span>
+                                <span v-if="inCreation.value == 'challenges'">Provide Challenge attributes</span>
+                            </h3>
+                            <button @click="homeStore.disable_creating" type="button" class="end-2.5 text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 ms-auto inline-flex justify-center items-center dark:hover:bg-gray-600 dark:hover:text-white" data-modal-hide="authentication-modal">
+                                <svg class="w-3 h-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 14">
+                                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6"/>
+                                </svg>
+                                <span class="sr-only">Close modal</span>
+                            </button>
+                        </div>
+                        <!-- Modal body -->
+                        <div class="p-4 md:p-5">
+                            <create_space v-if="inCreation.value == 'spaces'"/>
+                        </div>
+                    </div>
+                </div>
 
                 <!-- AI text area -->
                 <form class="p-2">
@@ -114,11 +138,8 @@
                     </div>
 
                     <div>
-                        <ul class="flex flex-col flex-wrap -mb-px space-x-2">
-                            <li v-for="item in items">
-                                <span class="inline-block p-4 border-b-2 rounded-t-lg">Feed</span>
-                            </li>
-                        </ul>
+                        <spaces v-if="activeTab == 'spaces'"/>
+                        <feed v-if="activeTab == 'feed'"/>
                     </div>
 
                 </div>
@@ -160,12 +181,19 @@
     import recentViewed from '@/components/home/recent_viewed.vue';
     import starred from '@/components/home/starred.vue';
     import breadcrumb from '@/components/breadcrumb.vue';
+    import create_space from "@/components/home/create_space.vue"
+    import spaces from "@/components/home/spaces.vue"
+    import feed from '@/components/home/feed.vue';
 
     import { useInnerRouter } from '@/stores/router';
+    import { useHomeStore }from '@/stores/homeStore'
     import { computed, onMounted } from 'vue';
 
     let innerRouter = useInnerRouter();
+    let homeStore = useHomeStore()
     let url = computed(() => innerRouter.ulrContainer)
+    let inCreation = computed(() => homeStore.creating_new)
+    let activeTab = computed(() => homeStore.activeTab)
 
     let items = [{}, {}, {}]
     let item = [{}, {}, {}, {}, {}, {}, {}]
@@ -180,6 +208,7 @@
         initTab?.parentElement?.dispatchEvent(new Event('click'));
     })
 
+    // The create new dropdown controller
     let drop_create = () => {
         let create_dropdown = document.querySelector("#create_dropdown");
         if (create_dropdown?.classList.contains('hidden')) {
@@ -189,6 +218,7 @@
         }
     }
 
+    // Bread crumb handler of the home page
     let homeNavigator = (tabName: string) => {
         homeTabs?.forEach(tab => {
             if(tab.classList.contains("activeHomeTab")){
@@ -200,6 +230,7 @@
             if(tab.id == tabName){
                 tab.classList.replace("inactiveHomeTab","activeHomeTab")
                 innerRouter.replaceLast(tabName)
+                homeStore.activateTab(tabName)
             }
         });
     }

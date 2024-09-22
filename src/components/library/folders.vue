@@ -4,30 +4,52 @@
             <div class="relative inline-flex items-center justify-center w-full z-1">
                 <span class="absolute left-0 px-3 font-medium text-gray-900 bg-white dark:text-white dark:bg-gray-900">Folders</span>
                 <hr class="w-full h-px my-8 bg-gray-200 border-0 dark:bg-gray-700">
-                <span class="absolute right-0 px-3 font-medium text-gray-900 bg-white dark:text-white dark:bg-gray-900">2 folders</span>
+                <div class="px-3 absolute right-0 bg-white dark:text-white dark:bg-gray-900">
+
+                    <!-- Folder addition button -->
+                    <svg @click="libraryStore.changeCreationState(true, 'folder')" data-tooltip-target="create_folder" data-tooltip-placement="left" class="w-6 h-6 text-gray-800 dark:text-white cursor-pointer" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewBox="0 0 24 24">
+                        <path fill-rule="evenodd" d="M5 4a2 2 0 0 0-2 2v1h10.968l-1.9-2.28A2 2 0 0 0 10.532 4H5ZM3 19V9h18v10a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2Zm9-8.5a1 1 0 0 1 1 1V13h1.5a1 1 0 1 1 0 2H13v1.5a1 1 0 1 1-2 0V15H9.5a1 1 0 1 1 0-2H11v-1.5a1 1 0 0 1 1-1Z" clip-rule="evenodd"/>
+                    </svg>
+                    <div id="create_folder" role="tooltip" class="absolute z-10 invisible inline-block px-3 py-2 text-sm font-medium text-white transition-opacity duration-300 bg-gray-400 rounded-lg shadow-sm opacity-0 tooltip text-nowrap dark:bg-gray-700">
+                        Create new
+                        <div class="tooltip-arrow" data-popper-arrow></div>
+                    </div>
+                </div>
             </div>
-            <div class="p-2 px-4 grid grid-cols-3 gap-2">
+            <div class="p-2 px-4" :class="{'grid grid-cols-3 gap-2': selectedLibrary.value.folders.length > 0}">
 
                 <!-- Folder card component -->
-                <div v-for="item in folders" class="max-w-sm p-4 bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700">
+                <div @click="libraryStore.selectFolder(folder.id)" v-if="selectedLibrary.value.folders.length > 0" v-for="folder in selectedLibrary.value.folders" class="max-w-sm p-4 bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700">
                     <svg class="w-6 h-6 mb-2 text-gray-500 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewBox="0 0 24 24">
                         <path fill-rule="evenodd" d="M3 6a2 2 0 0 1 2-2h5.532a2 2 0 0 1 1.536.72l1.9 2.28H3V6Zm0 3v10a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V9H3Z" clip-rule="evenodd"/>
                     </svg>
-                    <h2 class="text-lg font-semibold tracking-tight text-gray-900 dark:text-white">Mathematics</h2>
-                    <p class="font-normal text-gray-500 dark:text-gray-400">2 videos</p>
+                    <h2 class="text-lg font-semibold tracking-tight text-gray-900 dark:text-white">{{ folder.name }}</h2>
+                    <p v-if="selectedTab == 'videos'" class="font-normal text-gray-500 dark:text-gray-400">{{ folder.videos.length }} videos</p>
+                    <p v-if="selectedTab == 'photos'" class="font-normal text-gray-500 dark:text-gray-400">{{ folder.photos.length }} photos</p>
+                    <p v-if="selectedTab == 'documents'" class="font-normal text-gray-500 dark:text-gray-400">{{ folder.documents.length }} documents</p>
+                </div>
+                <div v-else class="flex flex-col items-center justify-center">
+                    <span>You have no folders yet</span>
+                    <span @click="libraryStore.changeCreationState(true, 'folder')" class="text-blue-600 cursor-pointer">Create one?</span>
                 </div>
             </div>
         </div>
-        <div>
+
+        <!-- On folder selection, only the content of the selected folder shall be acessed here -->
+        <div v-if="selectedFolder.name.length > 0">
             <div class="relative inline-flex items-center justify-center w-full z-1">
-                <span class="absolute left-0 px-3 font-medium text-gray-900 bg-white dark:text-white dark:bg-gray-900">All Videos</span>
+                <span v-if="selectedTab == 'videos'" class="absolute left-0 px-3 font-medium text-gray-900 bg-white dark:text-white dark:bg-gray-900">All Videos</span>
+                <span v-if="selectedTab == 'documents'" class="absolute left-0 px-3 font-medium text-gray-900 bg-white dark:text-white dark:bg-gray-900">All documents</span>
+                <span v-if="selectedTab == 'photos'" class="absolute left-0 px-3 font-medium text-gray-900 bg-white dark:text-white dark:bg-gray-900">All photos</span>
                 <hr class="w-full h-px my-8 bg-gray-200 border-0 dark:bg-gray-700">
-                <span class="absolute right-0 px-3 font-medium text-gray-900 bg-white dark:text-white dark:bg-gray-900">5 videos</span>
+                <span v-if="selectedTab == 'video'" class="absolute right-0 px-3 font-medium text-gray-900 bg-white dark:text-white dark:bg-gray-900">{{ selectedFolder.videos.length }} videos</span>
+                <span v-if="selectedTab == 'documents'" class="absolute right-0 px-3 font-medium text-gray-900 bg-white dark:text-white dark:bg-gray-900">{{ selectedFolder.documents.length }} documents</span>
+                <span v-if="selectedTab == 'photos'" class="absolute right-0 px-3 font-medium text-gray-900 bg-white dark:text-white dark:bg-gray-900">{{ selectedFolder.photos.length }} photos</span>
             </div>
             <div class="p-2 px-4 grid grid-cols-3 gap-2">
                 
                 <!-- Video card component -->
-                <div class="max-w-sm bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700">
+                <div v-if="selectedTab == 'videos'" v-for="(video, index) in selectedFolder.videos" :key="index" class="max-w-sm bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700">
                     <div class="h-24 border-b">
                         <img class="rounded-t-lg h-full" src="https://imgs.search.brave.com/Xq35KI1zrPnfbP_MZ7WB3aIXfEdJIwrcKLdjDzBSx4s/rs:fit:500:0:0:0/g:ce/aHR0cHM6Ly9nb3Zi/ZXJnLXNmY2MuaW1n/aXgubmV0L3Bvc3Rl/ZC1wcm9kdWN0LWlt/YWdlcy90dWRvcl93/YXRjaF9hc3NldHNf/dXByaWdodF93YXRj/aF90cmFuc3BhcmVu/dF9iYWNrZ3JvdW5k/X3pvb21lZF9pbi9N/MjU2MDBUTi0wMDAx/LnBuZz9hdXRvPWZv/cm1hdCxjb21wcmVz/cyZiZy1yZW1vdmU9/dHJ1ZSZmaXQ9Zmls/bCZmaWxsPXNvbGlk/JnRyaW09YXV0byZw/YWQ9ODgmcGFkLWxl/ZnQ9NTkmcGFkLXJp/Z2h0PTExJnc9MTQ4/MCZoPTE0ODAmcT0x/MDA" alt="" />
                     </div>
@@ -54,12 +76,24 @@
                         </div>
                     </div>
                 </div>
-
             </div>
         </div>
     </div>
 </template>
 
 <script setup lang="ts">
+    import { useLibraryStore } from '@/stores/libraryStore';
+    import { initTooltips } from 'flowbite';
+    import { computed, onMounted } from 'vue';
+
+    let libraryStore = useLibraryStore()
+    let selectedLibrary = computed(() => libraryStore.selectedLibrary)
+    let selectedTab = computed(() => libraryStore.selectedLibtab)
+    let selectedFolder = computed(() => libraryStore.selectedFolder)
+
     let folders = Array.from({length: 3})
+
+    onMounted(() => {
+        initTooltips()
+    })
 </script>

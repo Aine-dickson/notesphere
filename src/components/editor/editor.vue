@@ -4,9 +4,9 @@
             <toolbar/>
         </div>
         <div class="content h-full relative">
-            <div id="content" contenteditable="true" class="absolute top-0 bottom-0 w-full overflow-y-auto focus:outline-none pl-2">
+            <div id="content" contenteditable="true" class="absolute top-0 bottom-0 w-full overflow-y-auto focus:outline-none pl-2" :class="{'hidden': previewMode}">
             </div>
-            <div id="preview" class="preview markdown absolute right-0 top-0 bottom-0 left-1/2 z-40">
+            <div id="preview" class="preview markdown absolute top-0 bottom-0 w-full px-1" :class="{'hidden': !previewMode}">
             </div>
 
             <!-- Modal(overlay) for creating or opening a new file window -->
@@ -35,7 +35,6 @@
             </div> 
         </div>
 
-
     </div>
 </template>
 
@@ -45,9 +44,18 @@
     import { useFileStore } from '@/stores/fileStore'
     import { initDropdowns } from 'flowbite';
 
-    import { ref, onMounted, computed } from 'vue';
+    import { ref, onMounted, computed, watch } from 'vue';
     import markdownit from 'markdown-it';
     import hljs from 'highlight.js'
+
+    let fileStore = useFileStore()
+    let activeModal = computed(()=> fileStore.active_modal)
+    let mountedFile = computed(() => fileStore.loaded_file)
+    let previewMode = computed(() => fileStore.previewMode)
+
+    let parsed_md: string;
+    let raw_content: HTMLElement | null;
+    let preview: HTMLElement | null;
 
     let md = markdownit({
         html: true,
@@ -65,26 +73,59 @@
         }
     })
 
-    let fileStore = useFileStore()
-    let activeModal = computed(()=> fileStore.active_modal)
-
-    let parsed_md: string;
-    let raw_content: HTMLElement | null;
-    let preview: HTMLElement | null;
-
     onMounted(()=> {
-        initDropdowns()
+        initDropdowns();
+
         raw_content = document.getElementById('content');
         preview = document.querySelector("#preview");
 
-        
-        raw_content?.addEventListener('input', ()=> {
-            parsed_md = md.render(raw_content?.innerText);
-            preview.innerHTML = parsed_md
-            preview?.dataset.
+        const updatePreview = () => {
+            // Use innerText to get the raw content and trim any excess spaces
+            let rawText = raw_content?.innerText.trim() || '';
+            
+            // Parse the raw markdown content
+            parsed_md = md.render(rawText);
+
+            // Set the parsed content to the preview area
+            preview.innerHTML = parsed_md;
+
+            // Highlight code blocks, if any
             hljs.highlightElement(preview);
+        };
+
+        // Real-time updates when input is detected
+        raw_content?.addEventListener('input', () => {
+            updatePreview();
+        });
+
+        raw_content?.addEventListener('paste', ()=> {
+            updatePreview()
         })
+
+        raw_content?.addEventListener('change', ()=>{
+            updatePreview()
+        })
+
+        // When a file is mounted (loaded), render its content
+        if (mountedFile.value.name.length > 0) {
+            // Set the initial content in the editable area
+            raw_content.innerText = mountedFile.value.body;
+
+            const inputEvent = new Event('input');
+            raw_content?.dispatchEvent(inputEvent);
+        }
+
+        // Watch the mountedFile for changes and update accordingly
+        watch(mountedFile, (value) => {
+            raw_content.innerText = value.body;
+
+            const inputEvent = new Event('input');
+            raw_content?.dispatchEvent(inputEvent);
+        });
+
     })
+
+
 
 </script>
 

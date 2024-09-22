@@ -56,11 +56,16 @@
     import Breadcrumb from '@/components/breadcrumb.vue';
     import editor from '@/components/editor/editor.vue';
 
+    import { useFileStore } from '@/stores/fileStore';
     import { useInnerRouter } from '@/stores/router';
     import { computed, onMounted } from 'vue';
 
     let innerRouter = useInnerRouter();
     let url = computed(() => innerRouter.ulrContainer)
+
+    // Initialize the stores this component depends on
+    let fileStore = useFileStore()
+    if(!fileStore.initialized) fileStore.initialize()
 
     onMounted(() => {
         innerRouter.rebuild("Editor");
