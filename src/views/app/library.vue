@@ -161,15 +161,6 @@
         favorites_panel = document.querySelector(".favorites_panel")
         libraryTabs = document.querySelectorAll(".libTab");
 
-        if(selectedLibrary.value.loaded){
-            LibrarySelector(selectedLibrary.value.value.id, selectedLibrary.value.value.name)
-            if(selectedTab.value.length > 0){
-                libraryNavigator(selectedTab.value)
-            }
-        } else {
-            
-        }
-
         initTooltips()
     })
 
@@ -228,7 +219,6 @@
             }
 
             if(tab.id == libraryId){
-                console.log(tab)
                 libraryStore.changeSelection(libraryId)
                 libraryNavigator('all')
             }

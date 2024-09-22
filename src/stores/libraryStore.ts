@@ -5,7 +5,7 @@ export const useLibraryStore = defineStore('libraryStore', {
     state: ()=>{
       return {
         libraries: [] as Library[],
-        selectedLibrary: {loaded: false, value: {name: '', folders: [], id: '', files: [], owner: ''}, child: ''} as {loaded: boolean, value: Library},
+        selectedLibrary: {loaded: false, value: {name: '', folders: [], id: '', files: [], owner: ''}} as {loaded: boolean, value: Library},
         selectedLibtab: 'all' as string,
         creationState: {state: false, source: ''} as {state: boolean, source: string},
         selectedFolder: {name: '', id: '', library: ''} as Folder,
@@ -36,6 +36,7 @@ export const useLibraryStore = defineStore('libraryStore', {
       changeSelection(targetId: string) {
         console.log("Selecting library of id: ", targetId)
         let targetLib = this.libraries.find(library => library.id = targetId)
+        console.log('selected library of id ', targetLib?.id, 'Named ', targetLib?.name)
 
         if(targetLib){
           this.selectedLibrary = {loaded: true, value: targetLib}
@@ -62,13 +63,15 @@ export const useLibraryStore = defineStore('libraryStore', {
         try {
           let response = await api.post('library/create', {name: name})
           if(response.status == 201 || response.status == 200){
-            let libraryData = response.data
+            let libraryData = response.data.library
+
+            console.log("Created library is ", libraryData)
 
             let library: Library = {
               name: libraryData.name,
               folders: libraryData.folders,
               id: libraryData.id,
-              owner: libraryData.owner,
+              owner: response.data.owner,
               files: libraryData.files
             }
 
@@ -93,8 +96,9 @@ export const useLibraryStore = defineStore('libraryStore', {
 
           if(response.status == 201 || response.status == 200){
             this.libraries.forEach(library => {
-              if(library.id == response.data.libraryId){
-                library.folders.push(response.data.folder)
+              console.log("Created folder is ", response.data)
+              if(library.id == response.data.associated_library.id){
+                library.folders.push(response.data)
               }
             })
           }

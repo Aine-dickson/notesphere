@@ -38,7 +38,15 @@ export const useAccountStore = defineStore('accountStore', {
             }
         }
 
-        return {user, sideBarState, login, signup, changeSideBarState}
+        let logout = async()=> {
+            let response = await api.post('/user/logout')
+            if(response.status == 201 || response.status == 200){
+                user.value = null
+                router.push('/')
+            }
+        }
+
+        return {user, sideBarState, login, signup, changeSideBarState, logout}
     },
     persist: true
 })
