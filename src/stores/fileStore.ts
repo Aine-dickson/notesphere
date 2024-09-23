@@ -3,8 +3,6 @@ import api from "./api";
 import { useLibraryStore } from "./libraryStore";
 
 let libraryStore = useLibraryStore()
-await libraryStore.initialize()
-console.log(libraryStore.libraries)
 
 export const useFileStore = defineStore('fileStore', {
     state: () => {
@@ -24,7 +22,9 @@ export const useFileStore = defineStore('fileStore', {
         };
     },
     actions: {
+        
         async initialize() {
+            if(!libraryStore.initialized) await libraryStore.initialize()
             if (this.initialized) return; // If already initialized, do nothing
 
             try {
