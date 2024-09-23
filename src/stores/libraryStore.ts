@@ -26,7 +26,7 @@ export const useLibraryStore = defineStore('libraryStore', {
       },
       async initialize() {
         if (this.initialized) return; // If already initialized, do nothing
-
+        
             try {
                 let response = await api.get('library');
                 

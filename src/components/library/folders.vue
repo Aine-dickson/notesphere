@@ -24,12 +24,12 @@
                         <path fill-rule="evenodd" d="M3 6a2 2 0 0 1 2-2h5.532a2 2 0 0 1 1.536.72l1.9 2.28H3V6Zm0 3v10a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V9H3Z" clip-rule="evenodd"/>
                     </svg>
                     <h2 class="text-lg font-semibold tracking-tight text-gray-900 dark:text-white">{{ folder.name }}</h2>
-                    <p v-if="selectedTab == 'videos'" class="font-normal text-gray-500 dark:text-gray-400">{{ folder.videos.length }} videos</p>
-                    <p v-if="selectedTab == 'photos'" class="font-normal text-gray-500 dark:text-gray-400">{{ folder.photos.length }} photos</p>
-                    <p v-if="selectedTab == 'documents'" class="font-normal text-gray-500 dark:text-gray-400">{{ folder.documents.length }} documents</p>
+                    <p v-if="selectedTab == 'videos'" class="font-normal text-gray-500 dark:text-gray-400">{{ folder.library }} videos</p>
+                    <p v-if="selectedTab == 'photos'" class="font-normal text-gray-500 dark:text-gray-400">{{ folder.library }} photos</p>
+                    <p v-if="selectedTab == 'documents'" class="font-normal text-gray-500 dark:text-gray-400">{{ folder.library }} documents</p>
                 </div>
                 <div v-else class="flex flex-col items-center justify-center">
-                    <span>You have no folders yet</span>
+                    <span>No folders in {{ libraryStore.selectedLibrary.value.name }} yet</span>
                     <span @click="libraryStore.changeCreationState(true, 'folder')" class="text-blue-600 cursor-pointer">Create one?</span>
                 </div>
             </div>

@@ -41,7 +41,7 @@
         <span contenteditable="true" @click.prevent="" class="oultine-none focus:outline-none">{{
           fileName.name
         }}</span>
-        <span>.md</span>
+        <span v-if="loaded_file.id.length > 0">.md</span>
       </div>
       <div
         id="file_name"
@@ -140,6 +140,8 @@ onMounted(() => {
 onBeforeUnmount(() => {
     document.removeEventListener('click', handleDropdownEvent)
 })
+
+
 
 //   Handle global click event to toggle menu dropdowns
 let dropdownManger = () => {

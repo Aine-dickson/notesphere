@@ -16,7 +16,7 @@
             </nav>
             <div class="flex justify-between items-end">
                 <span class="font-bold text-xl">Profile</span>
-                <button @click="accountStore.logout()" type="button" class="text-white bg-[#1da1f2] hover:bg-[#1da1f2]/90 focus:ring-4 focus:outline-none focus:ring-[#1da1f2]/50 font-medium rounded-lg text-sm px-5 py-2 text-center inline-flex items-center dark:focus:ring-[#1da1f2]/55 me-2 mb-2">
+                <button @click="logout()" type="button" class="text-white bg-[#1da1f2] hover:bg-[#1da1f2]/90 focus:ring-4 focus:outline-none focus:ring-[#1da1f2]/50 font-medium rounded-lg text-sm px-5 py-2 text-center inline-flex items-center dark:focus:ring-[#1da1f2]/55 me-2 mb-2">
                     Logout
                 </button>
             </div>
@@ -43,12 +43,31 @@
     import menuTabs from '@/components/profile/menu_tabs.vue';
     import { useAccountStore } from '@/stores/account';
     import { computed } from 'vue';
+    import { useCameraStore } from '@/stores/cameraStore';
+    import { useFileStore } from '@/stores/fileStore';
+    import { useLibraryStore } from '@/stores/libraryStore';
+    import { useHomeStore } from '@/stores/homeStore';
 
     let accountStore = useAccountStore()
+    let cameraStore = useCameraStore()
+    let fileStore = useFileStore()
+    let libraryStore = useLibraryStore()
+    let homeStore = useHomeStore()
+
     let user = computed(() => accountStore.user)
     let items = [{}, {}, {}]
     let item = [{}, {}, {}, {}, {}, {}, {}]
 
+    let logout = async()=> {
+        let loggedOut = await accountStore.logout()
+
+        if (loggedOut) {
+            cameraStore.$reset()
+            fileStore.$reset()
+            libraryStore.$reset()
+            homeStore.$reset()
+        }
+    }
 
 </script>
 
