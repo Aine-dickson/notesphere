@@ -1,5 +1,20 @@
 <template>
     <section class="h-full">
+        <!-- Error popup -->
+        <div v-if="errorStore.message" class="p-2 z-50 absolute top-0 left-16 right-16 flex flex-col justify-center items-center  bg-slate-800 bg-opacity-75 rounded-md">
+            <span class="text-red-500 font-bold text-lg">Error:</span>
+            <div class="flex flex-col space-y-1 text-white">
+                <span v-if="errorStore.statusText">{{ errorStore.statusText }} error with status code {{ errorStore.status }} occured</span>
+                <span>Reason: {{ errorStore.message }}</span>
+                <span v-if="!errorStore.status">{{ errorStore.error }}</span>
+            </div>
+        </div>
+
+        <!-- Warning popup -->
+        <div v-if="errorStore.warning" class="p-2 z-50 absolute top-0 left-16 right-16 flex flex-col justify-center items-center  bg-slate-800 bg-opacity-75 rounded-md">
+            <span class="text-yellow-400 font-bold text-lg">Warning:</span>
+            <span>{{ errorStore.warning }}</span>
+        </div>
         <header class=" h-[12%] shadow-md">
             <nav class="h-full">
                 <div class="h-full flex flex-wrap justify-between items-center mx-auto max-w-screen-xl">
@@ -46,8 +61,10 @@
 
 <script setup lang="ts">
     import { onMounted } from 'vue';
+    import { useErrorStore } from '@/stores/errorStore';
     import login from './login.vue';
 
+    let errorStore = useErrorStore()
     let overlay_cancel: HTMLElement | null
     let overlay:  HTMLElement | null
     let loginButton:  HTMLElement | null

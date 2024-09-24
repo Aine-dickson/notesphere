@@ -77,7 +77,7 @@ const router = createRouter({
       name: 'auth',
       children: [
         {
-          path: 'index/',
+          path: '/',
           name: 'index',
           component: () => import('@/views/auth/index.vue')
         },
@@ -99,13 +99,13 @@ const router = createRouter({
 // Global Navigation Guard
 router.beforeEach((to, from, next) => {
   const authStore = useAccountStore();
-  const user = computed(()=>authStore.user)
+  const user = computed(() => authStore.user);
 
   // Check if the route requires authentication
   if (to.meta.requireAuth) {
     // If user is not authenticated, redirect to the login page
     if (!user.value) {
-      router.push('auth/index')
+      next('/auth');  // Use `next()` instead of `router.push()`
     } else {
       next();  // Allow the user to proceed to the route
     }
@@ -113,5 +113,6 @@ router.beforeEach((to, from, next) => {
     next();  // If the route doesn't require authentication, allow access
   }
 });
+
 
 export default router

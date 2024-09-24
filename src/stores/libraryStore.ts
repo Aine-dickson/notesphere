@@ -1,5 +1,6 @@
 import { defineStore } from 'pinia'
 import api from './api';
+import { useErrorStore } from './errorStore';
 
 export const useLibraryStore = defineStore('libraryStore', {
     state: ()=>{
@@ -8,7 +9,7 @@ export const useLibraryStore = defineStore('libraryStore', {
         selectedLibrary: {loaded: false, value: {name: '', folders: [], id: '', files: [], owner: ''}} as {loaded: boolean, value: Library},
         selectedLibtab: 'all' as string,
         creationState: {state: false, source: ''} as {state: boolean, source: string},
-        selectedFolder: {name: '', id: '', library: ''} as Folder,
+        selectedFolder: {name: '', id: '', library: '', owner: ''} as Folder,
         achives: [] as string[],
         initialized: false as boolean
       }
@@ -38,26 +39,33 @@ export const useLibraryStore = defineStore('libraryStore', {
                 else throw new Error('Failed to fetch files');
 
             } catch (error) {
-                console.error(error);
+              useErrorStore().handleError(error)
             }
       },
 
-      changeSelection(targetId: string) {
-        console.log("Selecting library of id: ", targetId)
-        let targetLib = this.libraries.find(library => library.id = targetId)
-        console.log('selected library of id ', targetLib?.id, 'Named ', targetLib?.name)
+      selectLibrary(targetId: string) {
+        let targetLib = this.libraries.find(library => library.id == targetId)
 
-        if(targetLib){
+        if(targetLib != undefined){
           this.selectedLibrary = {loaded: true, value: targetLib}
+          this.deselectFolder()
           console.log('loaded library ', targetLib)
+        } else {
+          console.log("No such library ", targetLib)
         }
-
-
       },
 
       selectFolder(folderId: string) {
         let folder = this.selectedLibrary.value.folders.find(folder => folder.id == folderId)
         if(folder) this.selectedFolder = folder;
+      },
+
+      deselectFolder() {
+        this.selectedFolder = {name: '', id: '', library: '', owner: ''}
+      },
+
+      selectTab(target: string) {
+        this.selectedLibtab = target
       },
 
       changeLibTab(targetTab: string) {
@@ -93,7 +101,7 @@ export const useLibraryStore = defineStore('libraryStore', {
           
           else throw new Error("Couldn't create Library")
         } catch (error) {
-          console.log(error)
+          useErrorStore().handleError(error)
         }
       },
 
@@ -115,14 +123,14 @@ export const useLibraryStore = defineStore('libraryStore', {
           else throw new Error("Couldn't create Library")
 
         } catch (error) {
-          console.log(error)
+          useErrorStore().handleError(error)
         }
       }
     },
     persist: true
 })
 
-type Library = {
+export type Library = {
   name: string
   folders: Folder[]
   id: string
@@ -130,7 +138,7 @@ type Library = {
   files: []
 }
 
-type Folder = {
+export type Folder = {
   name: string
   id: string
   owner: string

@@ -1,13 +1,18 @@
 import { useRouter } from 'vue-router'
 import { defineStore } from 'pinia'
 import api from './api'
+import { useHomeStore } from './homeStore'
+import { useCameraStore } from './cameraStore'
+import { useErrorStore } from './errorStore'
+import { useFileStore } from './fileStore'
+import { useLibraryStore } from './libraryStore'
 
 export const useAccountStore = defineStore('accountStore', {
     state: ()=> {
         return {
             user: null,
-            router: useRouter(),
-            sideBarState: false
+            sideBarState: false,
+            router: useRouter()
         }
     },
 
@@ -25,30 +30,35 @@ export const useAccountStore = defineStore('accountStore', {
                     this.router.push('/')
                 }
             } catch (error) {
-                console.log(error)   
+                useErrorStore().handleError(error)
             }
         },
     
-        async signup(userObject: {password: string, email_address: string}) {
+        async signup(userObject: {password: string, email_address: string, full_name: string}) {
             try{
                 let response = await api.post('/user/signup', userObject)
                 if(response.status == 201 || response.status == 200){
                     this.user = response.data
                     this.router.push('/')
                 }
-                console.log(response.data)
             } catch (error) {
-                console.log(error)
+                useErrorStore().handleError(error)
             }
         },
 
         async logout() {
-            let response = await api.post('/user/logout')
-            if(response.status == 201 || response.status == 200){
-                this.user = null
-                this.router.push('/')
-                return true
-            }
+            try {
+                let response = await api.post('/user/logout')
+                if(response.status == 201 || response.status == 200){
+                    this.user = null
+                    localStorage.clear()                
+                    sessionStorage.clear()
+                    this.router.push('/')
+                    return true
+                }
+            } catch (error) {
+                useErrorStore().handleError(error)
+            }    
         }
     },
     persist: true

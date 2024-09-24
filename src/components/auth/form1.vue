@@ -37,7 +37,7 @@
     let c_password = ref('')
 
     const signup = ()=> {
-        let userObject = {password: password.value, email_address: emailAddress.value}
+        let userObject = {password: password.value, email_address: emailAddress.value, full_name: ''}
         accountStore.signup(userObject)
     }
 </script>

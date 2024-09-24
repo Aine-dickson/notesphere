@@ -41,8 +41,8 @@
                     <span @click="libraryStore.changeCreationState(true, 'library')" class="text-blue-700 cursor-pointer">Create one?</span>
                 </div>
                 <ul class="flex flex-col text-sm font-medium text-gray-500 dark:text-gray-400 md:me-4 mb-4 md:mb-0 w-full">
-                    <li v-for="(library, index) in libraries" :key="index" @click="LibrarySelector(library.id, library.name)" class="w-full cursor-pointer">
-                        <div :id="library.id" class="LibraryTab flex items-center p-4 w-full border-b border-b-gray-100" :class="{'activeLibraryTab': selectedLibrary.value.id == library.id, 'inactiveLibraryTab': selectedLibrary.value.id != library.id}" aria-current="page">
+                    <li v-for="(library, index) in libraries" :key="index" class="cursor-pointer w-full">
+                        <div :id="library.id" @click="LibrarySelector(library.id, library.name)" class="LibraryTab flex items-center p-4 w-full border-b border-b-gray-100" :class="{'activeLibraryTab': selectedLibrary.value.id == library.id, 'inactiveLibraryTab': selectedLibrary.value.id != library.id}">
                             {{ library.name }}
                         </div>
                     </li>
@@ -64,11 +64,11 @@
                         <li @click="libraryNavigator('photos')" class="me-2 cursor-pointer">
                             <span id="photos" class="libTab inactiveLibTab inline-block p-4 border-b-2 rounded-t-lg">Photos</span>
                         </li>
-                        <li @click="libraryNavigator('archives')" class="me-2 cursor-pointer">
-                            <span id="archives" class="libTab inactiveLibTab inline-block p-4 border-b-2 rounded-t-lg">Archives</span>
-                        </li>
                         <li @click="libraryNavigator('documents')" class="me-2 cursor-pointer">
                             <span id="documents" class="libTab inactiveLibTab inline-block p-4 border-b-2 rounded-t-lg">Documents</span>
+                        </li>
+                        <li @click="libraryNavigator('archives')" class="me-2 cursor-pointer">
+                            <span id="archives" class="libTab inactiveLibTab inline-block p-4 border-b-2 rounded-t-lg">Archives</span>
                         </li>
                         <li @click="libraryNavigator('trash')" class="cursor-pointer">
                             <span id="trash" class="libTab inactiveLibTab inline-block p-4 border-b-2 rounded-t-lg">Trash</span>
@@ -141,15 +141,10 @@
     if(!libraryStore.initialized) libraryStore.initialize()
     if(filesStore.initialized) filesStore.initialize()
 
-    let url = computed(() => innerRouter.ulrContainer)
     let selectedLibrary = computed(() => libraryStore.selectedLibrary)
-    let selectedTab = computed(() => libraryStore.selectedLibtab)
     let libraries = computed(() => libraryStore.libraries)
     let creationState = computed(() => libraryStore.creationState)
     let libraryTabs: any | null;
-
-    // The available libraries listed on the left panel
-    let Libraries: any | null;
 
     // The in library tabs to help filter the libraries, that is, videos, photos, etc
     let library_panel: HTMLElement | null;
@@ -160,6 +155,14 @@
         library_panel = document.querySelector(".library_panel")
         favorites_panel = document.querySelector(".favorites_panel")
         libraryTabs = document.querySelectorAll(".libTab");
+
+        if(selectedLibrary.value.loaded){
+            document.querySelectorAll('.LibraryTab').forEach(library => {
+                if(library.id == selectedLibrary.value.value.id){
+                    library.dispatchEvent(new Event('click'))
+                }
+            })
+        }
 
         initTooltips()
     })
@@ -193,6 +196,7 @@
         libraryTabs?.forEach((tab: { id: string; classList: string; }) => {
             if(tab.id == tabName){
                 tab.classList.replace("inactiveLibTab","activeLibTab")
+                libraryStore.selectTab(tabName)
                 if (innerRouter.getLevel() < 3){
                     innerRouter.push(tabName)
                 } else {
@@ -205,25 +209,18 @@
     // Library selection handler, i.e, shifting from library to library
     let LibrarySelector = (libraryId: string, libraryName: string) => {
         console.log('Provided id ', libraryId)
-        Libraries = document.querySelectorAll(".LibraryTab")
 
-        Libraries?.forEach((tab: { id: string; }) => {
-            
-            if (innerRouter.getLevel() < 2){
-                innerRouter.push(libraryName)
-            } else if(innerRouter.getLevel() > 2){
-                innerRouter.pop()
-                innerRouter.replaceLast(libraryName)
-            } else {
-                innerRouter.replaceLast(libraryName)
-            }
+        if (innerRouter.getLevel() < 2){
+            innerRouter.push(libraryName)
+        } else if(innerRouter.getLevel() > 2){
+            innerRouter.pop()
+            innerRouter.replaceLast(libraryName)
+        } else {
+            innerRouter.replaceLast(libraryName)
+        }
 
-            if(tab.id == libraryId){
-                libraryStore.changeSelection(libraryId)
-                libraryNavigator('all')
-            }
-
-        });
+        libraryStore.selectLibrary(libraryId)
+        libraryNavigator('all')
     }
 
     let items = [{}, {}]
